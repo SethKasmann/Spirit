@@ -1,2 +1,2 @@
-#Spirit
-##A game engine in c++.
+# Spirit 
+A game engine in c++.  
