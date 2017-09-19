@@ -40,11 +40,13 @@ namespace spirit {
         // Set profile mask so old versions cannot be used.
         // ----- TODO: is this really necessary ----- //
         // Causes GLEW to fail to initialize... ?
+        // Set GL version.
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+        //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
         //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
                             //SDL_GL_CONTEXT_PROFILE_CORE);
 
-        // Set GL version.
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
         // Set GL double buffering.
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
