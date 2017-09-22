@@ -4,75 +4,65 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include "window.h"
-#include "vec.h"
-#include "matrix.h"
 #include "misc.h"
 #include "shader.h"
+#include "buffer.h"
+#include "vertexarray.h"
+#include "fpscounter.h"
+#include "object2d.h"
+#include "glm.hpp"
+#include "matrix_transform.hpp"
+#include "renderer2d.h"
 #include <cmath>
 
 int main()
 {
-    spirit::Window window("Test", 600, 600);
-    bool quit = false;
-
+    spirit::FPSCounter fps;
+    spirit::Window window("Test", 960, 540);
     spirit::Shader shader("spirit/shader/basic.vert", "spirit/shader/basic.frag");
+    spirit::Object2d sprite(glm::vec3(4, 3, 0), glm::vec2(8, 3), glm::vec4(0, 0, 1, 1));
 
-    float vertices[] = {
-        // positions         // colors
-         -1, -1, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-        0, 1, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         1,  -1, 0.0f,  0.0f, 0.0f, 1.0f   // top 
-
+    /*
+    GLfloat verticies[] =
+    {
+        4, 3, 0,
+        12, 3, 0,
+        4, 6, 0,
+        12, 6, 0,
     };
 
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
+    GLushort indicies[] =
+    {
+        0, 1, 2, 1, 2, 3
+    };
+    */
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //spirit::VertexArray vao;
+    //spirit::VertexBuffer vbo(verticies, 12, 4);
+    //spirit::IndexBuffer ibo(indicies, 6);
+    //vao.add_buffer(vbo, 0, 0, 0);
 
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0));
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    // glBindVertexArray(0);
+    glm::mat4 ortho = glm::mat4();
+    ortho = glm::ortho(0.0f, 16.0f, 0.0f, 9.0f, -1.0f, 1.0f);
 
     // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
     shader.enable();
-    float r = 0.0;
+    shader.set_mat4_fv("pr_matrix", ortho);
+
+    spirit::Renderer2d renderer;
+
+    //shader.set_mat4_fv("ml_matrix", trans);
     while (!window.closed())
     {
-        if (r == 360)
-            r = 0;
-        SDL_Event e;
-        while (SDL_PollEvent(&e))
-        {
-            if (e.type == SDL_QUIT)
-            {
-                quit = true;
-            }
-        }
         window.clear();
-        spirit::mat4 mat(1);
-        mat.orthographic(-1, 1, -1, 1, -1, 1);
-        spirit::mat4 mat2(1);
-        mat2.rotation(r, spirit::vec3(0, 0, 1));
-        //glUniformMatrix4fv(glGetUniformLocation(shader.get_id(), "ortho"), 1, GL_FALSE, *mat);
-        glUniformMatrix4fv(glGetUniformLocation(shader.get_id(), "vw_matrix"), 1, GL_FALSE, *mat2);
-
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
+        sprite.draw();
+        renderer.bind();
+        renderer.push(sprite);
+        renderer.unbind();
+        renderer.render();
         window.update();
-        r += .1;
+        if (fps.update())
+            std::cout << fps << '\n';
     }
 
     return 0;

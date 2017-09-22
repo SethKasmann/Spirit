@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include "misc.h"
+#include "glm.hpp"
 
 namespace spirit {
 
@@ -14,6 +15,7 @@ namespace spirit {
         void enable();
         void disable();
         GLenum get_id() const;
+        void set_mat4_fv(const char* name, glm::mat4& mat);
     private:
         GLenum _program;
     };

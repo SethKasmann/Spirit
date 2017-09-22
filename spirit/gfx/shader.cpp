@@ -45,7 +45,7 @@ namespace spirit {
 
         // Error checking.
         glGetShaderiv(shader, GL_COMPILE_STATUS, &error);
-        if (error == GL_FALSE)
+        if (error == false)
         {
             // Print the error.
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &size);
@@ -76,6 +76,11 @@ namespace spirit {
     GLenum Shader::get_id() const
     {
         return _program;
+    }
+
+    void Shader::set_mat4_fv(const char* name, glm::mat4& mat)
+    {
+        glUniformMatrix4fv(glGetUniformLocation(_program, name), 1, GL_FALSE, &mat[0][0]);
     }
 
 }
