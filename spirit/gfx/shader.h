@@ -1,3 +1,6 @@
+#ifndef SHADER_H
+#define SHADER_H
+
 #include <GL/glew.h>
 #include <vector>
 #include <iostream>
@@ -15,9 +18,13 @@ namespace spirit {
         void enable();
         void disable();
         GLenum get_id() const;
+        void set_vec2(const char* name, glm::vec2&& vec);
         void set_mat4_fv(const char* name, glm::mat4& mat);
+        void set_uniform_1i(const char* name, GLint id);
     private:
         GLenum _program;
     };
 
 }
+
+#endif

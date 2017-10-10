@@ -3,46 +3,21 @@
 namespace spirit {
 
 	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color)
-	: _pos(pos), _size(size), _color(color)
+	: _pos(pos), _size(size), _color(color), _texture(nullptr)
 	{
-		std::array<GLfloat, 12> verticies = 
-		{
-			_pos.x,           _pos.y,           0,
-			_pos.x + _size.x, _pos.y,           0,
-			_pos.x,           _pos.y + _size.y, 0,
-			_pos.x + _size.x, _pos.y + _size.y, 0
-		};
-
-		std::array<GLfloat, 16> colors =
-		{
-			color.x, color.y, color.z, color.w,
-			color.x, color.y, color.z, color.w,
-			color.x, color.y, color.z, color.w,
-			color.x, color.y, color.z, color.w
-		};
-
-		std::array<GLushort, 6> indicies =
-		{
-			0, 1, 2, 1, 2, 3
-		};
-
-		_vao.init();
-
-		VertexBuffer v(&verticies[0], 12, 4);
-		VertexBuffer c(&colors[0], 16, 4);
-
-		_ibo.init(&indicies[0], 6);
-		_vao.add_buffer(v, 0, 0, 0);
-		_vao.add_buffer(c, 1, 0, 0);
+		_tex_coords[0] = glm::vec2(0.0f, 1.0f);
+		_tex_coords[1] = glm::vec2(1.0f, 1.0f);
+		_tex_coords[2] = glm::vec2(0.0f, 0.0f);
+		_tex_coords[3] = glm::vec2(1.0f, 0.0f);
 	}
 
-	void Object2d::draw()
+	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, Texture* texture)
+	: _pos(pos), _size(size), _texture(texture)
 	{
-		_vao.bind();
-		_ibo.bind();
-		glDrawElements(GL_TRIANGLES, _ibo.get_size(), GL_UNSIGNED_SHORT, 0);
-		_ibo.unbind();
-		_vao.unbind();
+		_tex_coords[0] = glm::vec2(0.0f, 1.0f);
+		_tex_coords[1] = glm::vec2(1.0f, 1.0f);
+		_tex_coords[2] = glm::vec2(0.0f, 0.0f);
+		_tex_coords[3] = glm::vec2(1.0f, 0.0f);
 	}
 
 	const glm::vec4& Object2d::get_color() const
@@ -60,4 +35,21 @@ namespace spirit {
 		return _size;
 	}
 
+	const std::array<glm::vec2, 4>& Object2d::get_tex_coords() const
+	{
+		return _tex_coords;
+	}
+
+	uint32_t Object2d::get_ui_color() const
+	{
+		return (((static_cast<int>(_color.w * 255)) << 24)
+			  | ((static_cast<int>(_color.z * 255)) << 16)
+			  | ((static_cast<int>(_color.y * 255)) <<  8)
+			  |  (static_cast<int>(_color.x * 255)));
+	}
+
+	GLuint Object2d::get_tex_id() const
+	{
+		return _texture == nullptr ? 0 : _texture->get_id();
+	}
 }

@@ -78,9 +78,19 @@ namespace spirit {
         return _program;
     }
 
+    void Shader::set_vec2(const char* name, glm::vec2&& vec)
+    {
+        glUniform2f(glGetUniformLocation(_program, name), vec.x, vec.y);
+    }
+
     void Shader::set_mat4_fv(const char* name, glm::mat4& mat)
     {
         glUniformMatrix4fv(glGetUniformLocation(_program, name), 1, GL_FALSE, &mat[0][0]);
+    }
+
+    void Shader::set_uniform_1i(const char* name, GLint id)
+    {
+        glUniform1i(glGetUniformLocation(_program, name), id);
     }
 
 }

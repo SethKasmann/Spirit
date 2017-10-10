@@ -19,6 +19,9 @@ namespace spirit {
         void resize();
         void clear();
         void update();
+        void mouse_position(int* x, int* y) const;
+        int get_w() const;
+        int get_h() const;
     private:
         bool _closed;
         SDL_Window* _window;

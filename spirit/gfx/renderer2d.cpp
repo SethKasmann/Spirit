@@ -7,14 +7,15 @@ namespace spirit {
 	{
 		int offset;
 
-		_vbo.init(max_buffer_size);
-		_vao.add_buffer(_vbo, vertex_location, vertex_count, stride, vertex_offset);
-		_vao.add_buffer(_vbo, color_location, color_count, stride, color_offset);
+		_vbo.init(max_buffer_size * sizeof(Vertex));
+		_vao.add_vertex_buffer(_vbo);
+		_vao.add_color_buffer(_vbo);
+		_vao.add_tex_buffer(_vbo);
 
 		std::array<GLushort, max_buffer_size> indicies;
 
 		offset = 0;
-		for (int i = 0; i < max_buffer_size; i += 6)
+		for (int i = 0; i < max_buffer_size; i += 6) // is this loop bad ?
 		{
 			indicies[i    ] = offset;
 			indicies[i + 1] = offset + 1;
@@ -36,28 +37,38 @@ namespace spirit {
 
 	void Renderer2d::push(const Object2d& obj)
 	{
+		uint32_t c = obj.get_ui_color();
+
 		_vertex_ptr->position.x = obj.get_pos().x;
 		_vertex_ptr->position.y = obj.get_pos().y;
 		_vertex_ptr->position.z = obj.get_pos().z;
-		_vertex_ptr->color = obj.get_color();
+		_vertex_ptr->color = c;
+		_vertex_ptr->tex.x = obj.get_tex_coords()[0].x;
+		_vertex_ptr->tex.y = obj.get_tex_coords()[0].y;
 		_vertex_ptr++;
 
 		_vertex_ptr->position.x = obj.get_pos().x + obj.get_size().x;
 		_vertex_ptr->position.y = obj.get_pos().y;
 		_vertex_ptr->position.z = obj.get_pos().z;
-		_vertex_ptr->color = obj.get_color();
+		_vertex_ptr->color = c;
+		_vertex_ptr->tex.x = obj.get_tex_coords()[1].x;
+		_vertex_ptr->tex.y = obj.get_tex_coords()[1].y;
 		_vertex_ptr++;
 
 		_vertex_ptr->position.x = obj.get_pos().x;
 		_vertex_ptr->position.y = obj.get_pos().y + obj.get_size().y;
 		_vertex_ptr->position.z = obj.get_pos().z;
-		_vertex_ptr->color = obj.get_color();
+		_vertex_ptr->color = c;
+		_vertex_ptr->tex.x = obj.get_tex_coords()[2].x;
+		_vertex_ptr->tex.y = obj.get_tex_coords()[2].y;
 		_vertex_ptr++;
 
 		_vertex_ptr->position.x = obj.get_pos().x + obj.get_size().x;
 		_vertex_ptr->position.y = obj.get_pos().y + obj.get_size().y;
 		_vertex_ptr->position.z = obj.get_pos().z;
-		_vertex_ptr->color = obj.get_color();
+		_vertex_ptr->color = c;
+		_vertex_ptr->tex.x = obj.get_tex_coords()[3].x;
+		_vertex_ptr->tex.y = obj.get_tex_coords()[3].y;
 		_vertex_ptr++;
 	}
 

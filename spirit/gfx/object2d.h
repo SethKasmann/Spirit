@@ -4,6 +4,7 @@
 #include "buffer.h"
 #include "vertexarray.h"
 #include "glm.hpp"
+#include "texture.h"
 #include <array>
 
 namespace spirit {
@@ -12,16 +13,20 @@ namespace spirit {
 	{
 	public:
 		Object2d(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color);
+		Object2d(const glm::vec3& pos, const glm::vec2& size, Texture* texture);
 		void draw();
 		const glm::vec4& get_color() const;
 		const glm::vec3& get_pos() const;
 		const glm::vec2& get_size() const;
+		const std::array<glm::vec2, 4>& get_tex_coords() const;
+		uint32_t get_ui_color() const;
+		GLuint get_tex_id() const;
 	private:
-		IndexBuffer  _ibo;
-		VertexArray  _vao;
+		Texture* _texture;
 		glm::vec4 _color;
 		glm::vec3 _pos;
 		glm::vec2 _size;
+		std::array<glm::vec2, 4> _tex_coords;
 	};
 
 }

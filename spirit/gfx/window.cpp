@@ -47,7 +47,6 @@ namespace spirit {
         //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
                             //SDL_GL_CONTEXT_PROFILE_CORE);
 
-
         // Set GL double buffering.
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -63,10 +62,12 @@ namespace spirit {
         // Initialize GLEW.
         glewExperimental = GL_TRUE;
         GLenum err = glewInit();
+        
         if (err != GLEW_OK)
         {
             std::cout << "GLEW failed to initialize.\n";
         }
+
 
         // Set SDL event callback.
         SDL_AddEventWatch(event_watch_callback, NULL);
@@ -164,6 +165,25 @@ namespace spirit {
         SDL_Event e;
         SDL_PumpEvents();
         SDL_GL_SwapWindow(_window);
+    }
+
+    void Window::mouse_position(int* x, int* y) const
+    {
+        SDL_GetMouseState(x, y);
+    }
+
+    int Window::get_w() const
+    {
+        int ret;
+        SDL_GetWindowSize(_window, &ret, nullptr);
+        return ret;
+    }
+
+    int Window::get_h() const
+    {
+        int ret;
+        SDL_GetWindowSize(_window, nullptr, &ret);
+        return ret;
     }
 
 }
