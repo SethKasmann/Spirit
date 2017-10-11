@@ -2,16 +2,18 @@
 #define RENDERER2D_H
 
 #include <array>
+#include <vector>
+#include <algorithm>
 #include <iostream>
 #include "glm.hpp"
 #include "GL/glew.h"
-#include "vertexarray.h"
+#include "vertex.h"
 #include "dynamicbuffer.h"
 #include "object2d.h"
 
 namespace spirit {
 
-	static const int max_buffer_size = 10000;
+	#define MAX_BUFFER_SIZE 12000
 
 	class Renderer2d
 	{
@@ -22,9 +24,9 @@ namespace spirit {
 		void unbind();
 		void render();
 	private:
-		DynamicBuffer _vbo;
+		GLuint _vao;
+		GLuint _vbo;
 		IndexBuffer _ibo;
-		VertexArray _vao;
 		Vertex* _vertex_ptr;
 	};
 

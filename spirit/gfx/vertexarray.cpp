@@ -1,6 +1,7 @@
 #include "vertexarray.h"
 
 namespace spirit {
+	/*
 
 	VertexArray::VertexArray()
 	{
@@ -86,5 +87,5 @@ namespace spirit {
 	{
 		glBindVertexArray(0);
 	}
-
+*/
 }

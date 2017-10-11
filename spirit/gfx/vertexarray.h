@@ -7,7 +7,7 @@
 #include <cstddef>
 
 namespace spirit {
-
+/*
 	struct Vertex
 	{
 		glm::vec3 position;
@@ -40,7 +40,7 @@ namespace spirit {
 		void unbind() const;
 	private:
 		GLuint _vao;
-	};
+	};*/
 
 }
 

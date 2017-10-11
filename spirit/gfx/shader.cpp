@@ -93,4 +93,9 @@ namespace spirit {
         glUniform1i(glGetUniformLocation(_program, name), id);
     }
 
+    void Shader::set_uniform_1iv(const char* name, GLint* value, GLuint count)
+    {
+        glUniform1iv(glGetUniformLocation(_program, name), count, value);
+    }
+
 }

@@ -9,7 +9,7 @@ namespace spirit {
 	bool FPSCounter::update()
 	{
 		_count++;
-		if (_time < SDL_GetTicks() - interval)
+		if (_time + interval < SDL_GetTicks())
 		{
 			_time  = SDL_GetTicks();
 			_fps   = _count;

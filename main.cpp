@@ -24,17 +24,28 @@ int main()
 {
     //srand(time(NULL));
     spirit::Window window("Test", 960, 540);
-    spirit::FPSCounter fps;
 
     spirit::Shader shader("spirit/shader/basic.vert", "spirit/shader/basic.frag");
+
+    glEnable(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE0);
+    spirit::Texture tex("spirit/image/bombtest.png");
 
     std::vector<spirit::Object2d> sprites;
     for (float i = 0; i < 16.0f; i += 2.6)
     {
         for (float j = 0; j < 9.0f; j += .4)
         {
-            sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(2.6, .4), 
+            if (rand() % 2 == 0)
+            {
+                sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(2.6, .4), 
                 glm::vec4(0, rand() % 1000 / 1000.0f, rand() % 1000 / 1000.0f, 1)));
+            }
+            else
+            {
+                sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(2.6, .4), 
+                &tex));
+            }
         }
     }
     spirit::Batch batch(&shader, glm::ortho(0.0f, 16.0f, 0.0f, 9.0f, -1.0f, 1.0f));
@@ -44,15 +55,13 @@ int main()
     }
 
     int x, y;
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE0);
-    spirit::Texture tex("spirit/image/bombtest.png");
     tex.bind();
     shader.enable();
     shader.set_uniform_1i("tex", 0);
     shader.disable();
     tex.unbind();
 
+    spirit::FPSCounter fps;
     while (!window.closed())
     {
         window.mouse_position(&x, &y);
