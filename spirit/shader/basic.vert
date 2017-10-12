@@ -2,14 +2,14 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec4 color;
-layout (location = 2) in vec2 tex_coord;
+layout (location = 2) in vec3 tex_coord;
 layout (location = 3) in float tex_id;
 
 out DATA
 {
 	vec4 color;
 	vec4 position;
-	vec2 tex_coord;
+	vec3 tex_coord;
 	float tex_id;
 } out_data;
 

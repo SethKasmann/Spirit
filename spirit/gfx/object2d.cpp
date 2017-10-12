@@ -3,21 +3,30 @@
 namespace spirit {
 
 	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color)
-	: _pos(pos), _size(size), _color(color), _texture(nullptr)
+	: _pos(pos), _size(size), _color(color), _texture(nullptr), _level(-1.0)
 	{
-		_tex_coords[0] = glm::vec2(0.0f, 1.0f);
-		_tex_coords[1] = glm::vec2(1.0f, 1.0f);
-		_tex_coords[2] = glm::vec2(0.0f, 0.0f);
-		_tex_coords[3] = glm::vec2(1.0f, 0.0f);
+		_tex_coords[0] = glm::vec3(0.0f, 1.0f, 0.0f);
+		_tex_coords[1] = glm::vec3(1.0f, 1.0f, 0.0f);
+		_tex_coords[2] = glm::vec3(0.0f, 0.0f, 0.0f);
+		_tex_coords[3] = glm::vec3(1.0f, 0.0f, 0.0f);
 	}
 
 	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, Texture* texture)
-	: _pos(pos), _size(size), _texture(texture)
+	: _pos(pos), _size(size), _texture(texture), _level(-1.0)
 	{
-		_tex_coords[0] = glm::vec2(0.0f, 1.0f);
-		_tex_coords[1] = glm::vec2(1.0f, 1.0f);
-		_tex_coords[2] = glm::vec2(0.0f, 0.0f);
-		_tex_coords[3] = glm::vec2(1.0f, 0.0f);
+		_tex_coords[0] = glm::vec3(0.0f, 1.0f, 0.0f);
+		_tex_coords[1] = glm::vec3(1.0f, 1.0f, 0.0f);
+		_tex_coords[2] = glm::vec3(0.0f, 0.0f, 0.0f);
+		_tex_coords[3] = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+
+	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, float level)
+	: _pos(pos), _size(size), _level(level)
+	{
+		_tex_coords[0] = glm::vec3(0.0f, 1.0f, _level);
+		_tex_coords[1] = glm::vec3(1.0f, 1.0f, _level);
+		_tex_coords[2] = glm::vec3(0.0f, 0.0f, _level);
+		_tex_coords[3] = glm::vec3(1.0f, 0.0f, _level);
 	}
 
 	const glm::vec4& Object2d::get_color() const
@@ -35,7 +44,7 @@ namespace spirit {
 		return _size;
 	}
 
-	const std::array<glm::vec2, 4>& Object2d::get_tex_coords() const
+	const std::array<glm::vec3, 4>& Object2d::get_tex_coords() const
 	{
 		return _tex_coords;
 	}

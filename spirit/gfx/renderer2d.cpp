@@ -91,7 +91,7 @@ namespace spirit {
 		uint32_t color = 0;
 		GLfloat tex_id = 0.0;
 
-		if (!obj.get_tex_id())
+		if (obj._level == -1.0)
 			color = obj.get_ui_color();
 		else
 			tex_id = 1.0;
@@ -102,6 +102,7 @@ namespace spirit {
 		_vertex_ptr->color = color;
 		_vertex_ptr->tex.x = obj.get_tex_coords()[0].x;
 		_vertex_ptr->tex.y = obj.get_tex_coords()[0].y;
+		_vertex_ptr->tex.z = obj.get_tex_coords()[0].z;
 		_vertex_ptr->tex_id = tex_id;
 		_vertex_ptr++;
 
@@ -111,6 +112,7 @@ namespace spirit {
 		_vertex_ptr->color = color;
 		_vertex_ptr->tex.x = obj.get_tex_coords()[1].x;
 		_vertex_ptr->tex.y = obj.get_tex_coords()[1].y;
+		_vertex_ptr->tex.z = obj.get_tex_coords()[1].z;
 		_vertex_ptr->tex_id = tex_id;
 		_vertex_ptr++;
 
@@ -120,6 +122,7 @@ namespace spirit {
 		_vertex_ptr->color = color;
 		_vertex_ptr->tex.x = obj.get_tex_coords()[2].x;
 		_vertex_ptr->tex.y = obj.get_tex_coords()[2].y;
+		_vertex_ptr->tex.z = obj.get_tex_coords()[2].z;
 		_vertex_ptr->tex_id = tex_id;
 		_vertex_ptr++;
 
@@ -129,6 +132,7 @@ namespace spirit {
 		_vertex_ptr->color = color;
 		_vertex_ptr->tex.x = obj.get_tex_coords()[3].x;
 		_vertex_ptr->tex.y = obj.get_tex_coords()[3].y;
+		_vertex_ptr->tex.z = obj.get_tex_coords()[3].z;
 		_vertex_ptr->tex_id = tex_id;
 		_vertex_ptr++;
 	}

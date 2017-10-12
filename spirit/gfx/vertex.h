@@ -10,7 +10,7 @@ namespace spirit {
     {
         glm::vec3 position;
         uint32_t color;
-        glm::vec2 tex;
+        glm::vec3 tex;
         uint32_t tex_id;
     };
 
@@ -21,7 +21,7 @@ namespace spirit {
 
     static const int position_count      = 3;
     static const int color_count         = 4;
-    static const int texture_count       = 2;
+    static const int texture_count       = 3;
     static const int texture_id_count    = 1;
 
     static const int vertex_stride       = sizeof(Vertex);

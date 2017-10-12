@@ -1,3 +1,4 @@
+#include <string>
 #include "texture.h"
 
 namespace spirit {
