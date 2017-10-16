@@ -14,8 +14,7 @@ namespace spirit {
 	{
 	public:
 		Object2d(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color);
-		Object2d(const glm::vec3& pos, const glm::vec2& size, Texture* texture);
-		Object2d(const glm::vec3& pos, const glm::vec2& size, float level);
+		Object2d(const glm::vec3& pos, const glm::vec2& size, TextureArray& ta, std::string key, const glm::vec4& src_rect=glm::vec4(0, 0, 0, 0));
 		void draw();
 		const glm::vec4& get_color() const;
 		const glm::vec3& get_pos() const;
@@ -24,6 +23,7 @@ namespace spirit {
 		uint32_t get_ui_color() const;
 		GLuint get_tex_id() const;
 		float _level;
+		bool tex_flag;
 	private:
 		Texture* _texture;
 		glm::vec4 _color;

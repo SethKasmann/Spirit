@@ -32,55 +32,42 @@ int main()
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_TEXTURE_3D);
     glActiveTexture(GL_TEXTURE0);
-    //spirit::Texture tex("spirit/image/bomb1.png");
 
-    spirit::TextureArray test_array(416, 64);
-    test_array.insert("spirit/image/bomb1.png");
-    test_array.insert("spirit/image/bomb0.png");
-    test_array.generate_texture();
+    spirit::TextureArray textures(416, 64);
+    textures.insert("spirit/image/bomb1.png", "bomb1", 1);
+    textures.insert("spirit/image/bomb0.png", "bomb0", 1);
+    textures.generate_texture();
 
     std::vector<spirit::Object2d> sprites;
-    for (float i = 0; i < 16.0f; i += 2.6)
+
+    for (int i = 0; i < 540; i += 64)
     {
-        for (float j = 0; j < 9.0f; j += .4)
+        switch (rand() % 2)
         {
-            switch (rand() % 3)
-            {
-                case 0:
-                    sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(2.6, .4), 
-                    glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)));
-                    break;
-                case 1:
-                    sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(2.6, .4), 
-                    0.0));
-                    break;
-                case 2:
-                    sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(2.6, .4), 
-                    1.0));
-                    break;
-            }
+            case 0:
+                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(416, 64), textures, "bomb1"));
+                break;
+            case 1:
+                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(416, 64), textures, "bomb0"));
+                break;
         }
     }
-    spirit::Batch batch(&shader, glm::ortho(0.0f, 16.0f, 0.0f, 9.0f, -1.0f, 1.0f));
+
+    spirit::Batch batch(&shader, &textures, glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f));
     for (auto& e : sprites)
     {
-       batch.push_back(&e);
+        batch.push(&e);
     }
 
     int x, y;
-    test_array.bind();
-    shader.enable();
-    shader.set_uniform_1i("tex_array", 0);
-    shader.disable();
-    test_array.unbind();
 
     spirit::FPSCounter fps;
     while (!window.closed())
     {
         window.mouse_position(&x, &y);
         shader.enable();
-        test_array.bind();
-        shader.set_vec2("light_position", glm::vec2(x * 16.0f / window.get_w(), 9.0f - y * 9.0f / window.get_h()));
+        textures.bind();
+        shader.set_vec2("light_position", glm::vec2(x * 960.0f / window.get_w(), 540.0f - y * 540.0f / window.get_h()));
         window.clear();
         batch.render();
         

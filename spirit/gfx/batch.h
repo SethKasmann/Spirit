@@ -13,13 +13,14 @@ namespace spirit {
 	class Batch
 	{
 	public:
-		Batch(Shader* shader, const glm::mat4& pr_mat);
-		void push_back(Object2d* element);
+		Batch(Shader* shader, TextureArray* tex_array, const glm::mat4& pr_mat);
+		void push(const Object2d* element);
 		void render();
 	private:
 		Shader* _shader;
+		TextureArray* _tex_array;
 		Renderer2d _renderer;
-		std::vector<Object2d*> _elements;
+		std::vector<const Object2d*> _elements;
 		glm::mat4 _pr_mat;
 	};
 

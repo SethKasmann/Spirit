@@ -3,30 +3,32 @@
 namespace spirit {
 
 	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color)
-	: _pos(pos), _size(size), _color(color), _texture(nullptr), _level(-1.0)
+	: _pos(pos), _size(size), _color(color), _texture(nullptr), _level(-1.0), tex_flag(false)
 	{
 		_tex_coords[0] = glm::vec3(0.0f, 1.0f, 0.0f);
 		_tex_coords[1] = glm::vec3(1.0f, 1.0f, 0.0f);
-		_tex_coords[2] = glm::vec3(0.0f, 0.0f, 0.0f);
-		_tex_coords[3] = glm::vec3(1.0f, 0.0f, 0.0f);
+		_tex_coords[2] = glm::vec3(1.0f, 0.0f, 0.0f);
+		_tex_coords[3] = glm::vec3(0.0f, 0.0f, 0.0f);
 	}
 
-	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, Texture* texture)
-	: _pos(pos), _size(size), _texture(texture), _level(-1.0)
+	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, TextureArray& ta, std::string key, const glm::vec4& src_rect)
+	: _pos(pos), _size(size), tex_flag(true)
 	{
-		_tex_coords[0] = glm::vec3(0.0f, 1.0f, 0.0f);
-		_tex_coords[1] = glm::vec3(1.0f, 1.0f, 0.0f);
-		_tex_coords[2] = glm::vec3(0.0f, 0.0f, 0.0f);
-		_tex_coords[3] = glm::vec3(1.0f, 0.0f, 0.0f);
-	}
-
-	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, float level)
-	: _pos(pos), _size(size), _level(level)
-	{
-		_tex_coords[0] = glm::vec3(0.0f, 1.0f, _level);
-		_tex_coords[1] = glm::vec3(1.0f, 1.0f, _level);
-		_tex_coords[2] = glm::vec3(0.0f, 0.0f, _level);
-		_tex_coords[3] = glm::vec3(1.0f, 0.0f, _level);
+		float z = static_cast<float>(ta[key]);
+		if (src_rect == glm::vec4(0, 0, 0, 0))
+		{
+			_tex_coords[0] = glm::vec3(0.0f, 1.0f, z);
+			_tex_coords[1] = glm::vec3(1.0f, 1.0f, z);
+			_tex_coords[2] = glm::vec3(1.0f, 0.0f, z);
+			_tex_coords[3] = glm::vec3(0.0f, 0.0f, z);
+		}
+		else
+		{
+			_tex_coords[0] = glm::vec3(src_rect.x / ta.get_w(),                (src_rect.y + src_rect.w) / ta.get_h(), z);
+			_tex_coords[1] = glm::vec3((src_rect.x + src_rect.z) / ta.get_w(), (src_rect.y + src_rect.w) / ta.get_h(), z);
+			_tex_coords[2] = glm::vec3((src_rect.x + src_rect.z) / ta.get_w(), src_rect.y / ta.get_h(),                z);
+			_tex_coords[3] = glm::vec3(src_rect.x / ta.get_w(),                src_rect.y / ta.get_h(),                z);
+		}
 	}
 
 	const glm::vec4& Object2d::get_color() const
