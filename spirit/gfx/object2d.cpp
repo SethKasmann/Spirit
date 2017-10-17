@@ -3,7 +3,7 @@
 namespace spirit {
 
 	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color)
-	: _pos(pos), _size(size), _color(color), _texture(nullptr), _level(-1.0), tex_flag(false)
+	: _pos(pos), _size(size), _color(color), _level(-1.0), tex_flag(false)
 	{
 		_tex_coords[0] = glm::vec3(0.0f, 1.0f, 0.0f);
 		_tex_coords[1] = glm::vec3(1.0f, 1.0f, 0.0f);
@@ -29,6 +29,23 @@ namespace spirit {
 			_tex_coords[2] = glm::vec3((src_rect.x + src_rect.z) / ta.get_w(), src_rect.y / ta.get_h(),                z);
 			_tex_coords[3] = glm::vec3(src_rect.x / ta.get_w(),                src_rect.y / ta.get_h(),                z);
 		}
+	}
+
+	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, Texture& texture, std::string key)
+	: _pos(pos), _size(size), tex_flag(true)
+	{
+		const float x = static_cast<float>(texture[key].x);
+		const float y = static_cast<float>(texture[key].y);
+		const float z = static_cast<float>(texture[key].z);
+		const float w = static_cast<float>(texture.get_w());
+		const float h = static_cast<float>(texture.get_h());
+
+		std::cout << "x/w: " << x / w <<"y/h:" << y / h << '\n';
+
+		_tex_coords[0] = glm::vec3(x / w, 1.0f, z);
+		_tex_coords[1] = glm::vec3(1.0f, 1.0f, z);
+		_tex_coords[2] = glm::vec3(1.0f, y / h, z);
+		_tex_coords[3] = glm::vec3(x / w, y / h, z);
 	}
 
 	const glm::vec4& Object2d::get_color() const
@@ -57,10 +74,5 @@ namespace spirit {
 			  | ((static_cast<int>(_color.z * 255)) << 16)
 			  | ((static_cast<int>(_color.y * 255)) <<  8)
 			  |  (static_cast<int>(_color.x * 255)));
-	}
-
-	GLuint Object2d::get_tex_id() const
-	{
-		return _texture == nullptr ? 0 : _texture->get_id();
 	}
 }

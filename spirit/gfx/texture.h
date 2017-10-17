@@ -1,29 +1,44 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "SDL2/SDL_image.h"
-#include <GL/glew.h>
 #include <iostream>
-#include "glm.hpp"
+#include <unordered_map>
+#include <algorithm>
+#include <string>
+#include <GL/glew.h>
+#include <array>
+#include "layerx.h"
 
 namespace spirit {
+
+    // Maximum texture ID's for open GL
+    #define MAX_TEX_SLOTS 32
+
+    // Global array to keep track of texture slots.
+    static std::array<bool, MAX_TEX_SLOTS> _g_slots;
 
     class Texture
     {
     public:
-        Texture(const char* filename);
-        void bind() const;
-        void unbind() const;
-        float get_w() const;
-        float get_h() const;
+        Texture();
+        Texture(std::string file, std::string key);
+        ~Texture();
+        void insert_image(std::string file, std::string key);
+        void insert_font(std::string file, std::string key, int fsize);
+        void generate();
+        void bind();
+        void unbind();
         GLuint get_id() const;
-        friend std::ostream& operator<<(std::ostream& o, const Texture& t);
+        GLsizei get_w() const;
+        GLsizei get_h() const;
+        const LayerX& operator[](std::string key); 
     private:
-        int _w, _h;
-        GLuint _id;
-        SDL_Surface* _image;
-    };
 
+    private:
+        std::unordered_map<std::string, LayerX> _map;
+        GLsizei _w, _h, _size;
+        GLuint _texture, _id;
+    };
 }
 
 #endif

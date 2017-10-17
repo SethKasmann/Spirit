@@ -1,13 +1,16 @@
-#include <string>
 #include "texture.h"
 
 namespace spirit {
 
-    Texture::Texture(const char* filename)
-    : _id(0), _image(nullptr)
+    Texture::Texture()
+    : _w(0), _h(0), _size(0), _texture(0), _id(0)
     {
+        // Set the GL blend mode.
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         // Initialize SDL Image
-        int flags = IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF;
+        const int flags = IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF;
         int init = IMG_Init(flags);
         if ((init & flags) != flags)
         {
@@ -15,76 +18,111 @@ namespace spirit {
                       << "IMG_Init: " << IMG_GetError();
         }
 
-        // Create SDL surface. Check to verify the image was loaded properly.
-        _image = IMG_Load(filename);
-
-        if (_image == nullptr)
+        // Iniitialize SDL TTF
+        if(TTF_Init() == -1) 
         {
-            std::cout << "IMG_Load: " << filename << " could not be loaded.\n"
-                      << "IMG_Load: " << IMG_GetError();
+            std::cout << "TTF_Init: " << TTF_GetError() << '\n';
         }
 
-        _w = _image->w;
-        _h = _image->h;
-
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        // Enable GL Texure for 2D and 3D.
         glEnable(GL_TEXTURE_2D);
-        glGenTextures(1, &_id);
+        glEnable(GL_TEXTURE_3D);
+
+        // Set the texture id by finding the next avaliable slot. This
+        // ID is the same as the OpenGL texture i.e. GL_TEXTURE0 + _id
+        auto it = std::find(_g_slots.begin(), _g_slots.end(), 0);
+        if (it == _g_slots.end())
+        {
+            std::cout << "Texture::Texture() ERROR: _g_slots is full.\n";
+        }
+        _id = std::distance(_g_slots.begin(), it);
+        std::cout << "ID: " << _id << '\n';
+    }
+
+    Texture::Texture(std::string file, std::string key) : Texture()
+    {
+
+    }
+
+    Texture::~Texture()
+    {
+        _g_slots[_id] = false;
+        glDeleteTextures(1, &_texture);
+    }
+
+    void Texture::insert_image(std::string file, std::string key)
+    {
+        _map[key] = LayerX(file);
+        _size++;
+    }
+
+    void Texture::insert_font(std::string file, std::string key, int fsize)
+    {
+        _map[key] = LayerX(file, fsize);
+        _size++;
+    }
+
+    void Texture::generate()
+    {
+        // Create all surfaces. Determine the w / h for the texture by finding 
+        // the max w and h of all the surfaces.
+        for (auto it = _map.begin(); it != _map.end(); ++it)
+        {
+            it->second.init(std::distance(_map.begin(), it));
+            _w = std::max(_w, it->second.w);
+            _h = std::max(_h, it->second.h);
+        }
+
+        // Generate and bind the texture in OpenGL.
+        glGenTextures(1, &_texture);
         bind();
 
-        int mode = GL_RGB;
+        // Allocate the storage in OpenGL.
+        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, _w, _h, _size);
 
-        if (_image->format->BytesPerPixel == 4)
+        // TODO: add mipmaps
+
+        // Generate each layer. After the layer is generated free the SDL
+        // surface. 
+        std::cout << "Main W / H: " << _w << " " << _h << '\n';
+        for (auto it = _map.begin(); it != _map.end(); ++it)
         {
-            if (_image->format->Rmask == 0x000000ff) 
-                mode = GL_RGBA;
-            else
-                mode = GL_BGRA;
-        }
-        else if (_image->format->BytesPerPixel == 3)
-        {
-            if (_image->format->Rmask == 0x000000ff) 
-                mode = GL_RGB;
-            else 
-                mode = GL_BGR;
-        }
-        else
-        {
-            std::cout << "Texture::Texture: Unsupported pixel format.\n";
+            it->second.generate(_w, _h);
+            it->second.free();
         }
 
-        // Give image data to open GL.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // Set texture parameters.
+        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, mode, _image->w, _image->h, 0, mode, GL_UNSIGNED_BYTE, _image->pixels);
+        // Unbind the texture.
         unbind();
-
-        // Free SDL surface.
-        SDL_FreeSurface(_image);
-        _image = nullptr;
     }
 
-    void Texture::bind() const
+    void Texture::bind()
     {
-        glBindTexture(GL_TEXTURE_2D, _id);
+        glActiveTexture(GL_TEXTURE0 + _id);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, _texture);
     }
 
-    void Texture::unbind() const
+    void Texture::unbind()
     {
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
-    float Texture::get_w() const
+    const LayerX& Texture::operator[](std::string key)
     {
-        return _w;
-    }
-
-    float Texture::get_h() const
-    {
-        return _h;
+        // Confirm the key is in the map.
+        auto it = _map.find(key);
+        if (it == _map.end())
+        {
+            std::cout << "Texture operator[]: Key " << key 
+                      << " not found in map.\n";
+        }
+        // Return a reference to the layer.
+        return it->second;
     }
 
     GLuint Texture::get_id() const
@@ -92,49 +130,14 @@ namespace spirit {
         return _id;
     }
 
-    std::ostream& operator<<(std::ostream& o, const Texture& t)
+    GLsizei Texture::get_w() const
     {
-        if (t._image == nullptr)
-        {
-            o << "Texture = nullptr\n";
-            return o;
-        }
+        return _w;
+    }
 
-        for (int x = 0; x < t.get_w(); ++x)
-        {
-            o << "X:" << x << '\n';
-            for (int y = 0; y < t.get_h(); ++y)
-            {
-                o << "\tY:" << y << " ";
-                int bpp = t._image->format->BytesPerPixel;
-                uint8_t* p = static_cast<uint8_t*>(t._image->pixels) + y * t._image->pitch + x * bpp;
-
-                switch(bpp)
-                {
-                    case 1:
-                        o << *p;
-                        break;
-                    case 2:
-                        o << *reinterpret_cast<uint16_t*>(p);
-                        break;
-                    case 3:
-                        if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-                            o << ((p[0] << 16) | (p[1] << 8) | p[2]);
-                        else
-                            o << (p[0] | (p[1] << 8) | (p[2] << 16));
-                        break;
-                    case 4:
-                        o << *reinterpret_cast<uint32_t*>(p);
-                        break;
-                    default:
-                        o << "Texture bpp error. Unable to print.\n";
-                        break;
-                }
-                o << '\n';
-            }
-            //o << '\n';
-        }
-        return o;
+    GLsizei Texture::get_h() const
+    {
+        return _h;
     }
 
 }
