@@ -20,14 +20,14 @@ int actual_layer;
 
 void main()
 {
-	float intensity = 1.0 / length(out_data.position.xy - light_position);
+	float intensity = 20.0 / length(out_data.position.xy - light_position);
     //color = out_data.color * intensity;
     if (out_data.tex_id > 0.0)
     {
-	    color = texture(tex_array, out_data.tex_coord) * intensity;
+	    color = texture(tex_array, out_data.tex_coord); //* intensity;
     }
     else
     {
-    	color = out_data.color * intensity;
+    	color = out_data.color; //* intensity;
     }
 }
