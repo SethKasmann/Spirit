@@ -2,17 +2,17 @@
 
 namespace spirit {
 
-	Batch::Batch(Shader* shader, TextureArray* tex_array, const glm::mat4& pr_mat)
+	Batch::Batch(Shader* shader, Texture* texture, const glm::mat4& pr_mat)
 	: _shader(shader)
-	, _tex_array(tex_array)
+	, _texture(texture)
 	, _pr_mat(pr_mat)
 	{
-		_tex_array->bind();
+		_texture->bind();
 		_shader->enable();
 		_shader->set_mat4_fv("pr_matrix", _pr_mat);
-		_shader->set_uniform_1i("tex_array", _tex_array->get_id());
+		_shader->set_uniform_1i("tex_array", _texture->get_id());
 		_shader->disable();
-		_tex_array->unbind();
+		_texture->unbind();
 	}
 
 	void Batch::push(const Object2d* element)
@@ -23,7 +23,7 @@ namespace spirit {
 	void Batch::render()
 	{
 		_shader->enable();
-		_tex_array->bind();
+		_texture->bind();
 		_renderer.bind();
 		for (int i = 0; i < _elements.size(); ++i)
 		{
@@ -31,9 +31,8 @@ namespace spirit {
 		}
 		_renderer.unbind();
 		_renderer.render();
-		_tex_array->unbind();
+		_texture->unbind();
 		_shader->disable();
 
 	}
-
 }
