@@ -29,31 +29,30 @@ int main()
 
     spirit::Shader shader("spirit/shader/basic.vert", "spirit/shader/basic.frag");
 
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_3D);
-    glActiveTexture(GL_TEXTURE0);
-
-    spirit::TextureArray textures(416, 64);
-    textures.insert("spirit/image/bomb1.png", "bomb1", 1);
-    textures.insert("spirit/image/bomb0.png", "bomb0", 1);
-    textures.generate_texture();
+    spirit::Texture texture;
+    texture.insert_image("spirit/image/bomb1.png", "bomb1");
+    texture.insert_image("spirit/image/bomb0.png", "bomb0");
+    texture.insert_image("spirit/image/bomb2.png", "bomb2");
+    texture.generate();
 
     std::vector<spirit::Object2d> sprites;
 
     for (int i = 0; i < 540; i += 64)
     {
-        switch (rand() % 2)
+        switch (rand() % 3)
         {
             case 0:
-                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(416, 64), textures, "bomb1"));
+                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(416, 64), texture, "bomb1"));
                 break;
             case 1:
-                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(416, 64), textures, "bomb0"));
+                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(416, 64), texture, "bomb0"));
                 break;
+            case 2:
+                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(208, 64), texture, "bomb2"));
         }
     }
 
-    spirit::Batch batch(&shader, &textures, glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f));
+    spirit::Batch batch(&shader, &texture, glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f));
     for (auto& e : sprites)
     {
         batch.push(&e);
@@ -66,7 +65,7 @@ int main()
     {
         window.mouse_position(&x, &y);
         shader.enable();
-        textures.bind();
+        texture.bind();
         shader.set_vec2("light_position", glm::vec2(x * 960.0f / window.get_w(), 540.0f - y * 540.0f / window.get_h()));
         window.clear();
         batch.render();
