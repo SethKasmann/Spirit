@@ -19,7 +19,6 @@ namespace spirit {
 		void render();
 	private:
 		Shader* _shader;
-		TextureArray* _tex_array;
 		Texture* _texture;
 		Renderer2d _renderer;
 		std::vector<const Object2d*> _elements;

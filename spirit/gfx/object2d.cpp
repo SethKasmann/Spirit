@@ -11,41 +11,18 @@ namespace spirit {
 		_tex_coords[3] = glm::vec3(0.0f, 0.0f, 0.0f);
 	}
 
-	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, TextureArray& ta, std::string key, const glm::vec4& src_rect)
-	: _pos(pos), _size(size), tex_flag(true)
+	Object2d::Object2d(const glm::vec3& pos, Texture& texture, std::string key, int index)
+	: _pos(pos), tex_flag(true)
 	{
-		float z = static_cast<float>(ta[key]);
-		if (src_rect == glm::vec4(0, 0, 0, 0))
-		{
-			_tex_coords[0] = glm::vec3(0.0f, 1.0f, z);
-			_tex_coords[1] = glm::vec3(1.0f, 1.0f, z);
-			_tex_coords[2] = glm::vec3(1.0f, 0.0f, z);
-			_tex_coords[3] = glm::vec3(0.0f, 0.0f, z);
-		}
-		else
-		{
-			_tex_coords[0] = glm::vec3(src_rect.x / ta.get_w(),                (src_rect.y + src_rect.w) / ta.get_h(), z);
-			_tex_coords[1] = glm::vec3((src_rect.x + src_rect.z) / ta.get_w(), (src_rect.y + src_rect.w) / ta.get_h(), z);
-			_tex_coords[2] = glm::vec3((src_rect.x + src_rect.z) / ta.get_w(), src_rect.y / ta.get_h(),                z);
-			_tex_coords[3] = glm::vec3(src_rect.x / ta.get_w(),                src_rect.y / ta.get_h(),                z);
-		}
+		_size.x = texture[key].get_w();
+		_size.y = texture[key].get_h();
+		_tex_coords = texture[key][index];
 	}
 
-	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, Texture& texture, std::string key)
+	Object2d::Object2d(const glm::vec3& pos, const glm::vec2& size, Texture& texture, std::string key, int index)
 	: _pos(pos), _size(size), tex_flag(true)
 	{
-		const float x = static_cast<float>(texture[key].x);
-		const float y = static_cast<float>(texture[key].y);
-		const float z = static_cast<float>(texture[key].z);
-		const float w = static_cast<float>(texture.get_w());
-		const float h = static_cast<float>(texture.get_h());
-
-		std::cout << "x/w: " << x / w <<"y/h:" << y / h << '\n';
-
-		_tex_coords[0] = glm::vec3(x / w, 1.0f, z);
-		_tex_coords[1] = glm::vec3(1.0f, 1.0f, z);
-		_tex_coords[2] = glm::vec3(1.0f, y / h, z);
-		_tex_coords[3] = glm::vec3(x / w, y / h, z);
+		_tex_coords = texture[key][index];
 	}
 
 	const glm::vec4& Object2d::get_color() const

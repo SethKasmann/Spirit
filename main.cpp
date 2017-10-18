@@ -15,7 +15,7 @@
 #include "renderer2d.h"
 #include "batch.h"
 #include "texture.h"
-#include "texturearray.h"
+#include "font.h"
 #include <cmath>
 #include <vector>
 #include <memory>
@@ -33,6 +33,7 @@ int main()
     texture.insert_image("spirit/image/bomb1.png", "bomb1");
     texture.insert_image("spirit/image/bomb0.png", "bomb0");
     texture.insert_image("spirit/image/bomb2.png", "bomb2");
+    texture.insert_font("spirit/font/OpenSans.ttf", "hello", "Hello World!", 12, 0, 255, 0);
     texture.generate();
 
     std::vector<spirit::Object2d> sprites;
@@ -42,13 +43,17 @@ int main()
         switch (rand() % 3)
         {
             case 0:
-                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(416, 64), texture, "bomb1"));
+                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), texture, "bomb1"));
                 break;
             case 1:
-                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(416, 64), texture, "bomb0"));
+                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), texture, "bomb0"));
                 break;
             case 2:
-                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), glm::vec2(208, 64), texture, "bomb2"));
+                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), texture, "bomb2"));
+                break;
+            case 3:
+                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), texture, "hello"));
+                break;
         }
     }
 

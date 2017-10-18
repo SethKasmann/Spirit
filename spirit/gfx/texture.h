@@ -7,7 +7,10 @@
 #include <string>
 #include <GL/glew.h>
 #include <array>
-#include "layerx.h"
+#include <memory>
+#include "layer.h"
+#include "image.h"
+#include "font.h"
 
 namespace spirit {
 
@@ -24,18 +27,17 @@ namespace spirit {
         Texture(std::string file, std::string key);
         ~Texture();
         void insert_image(std::string file, std::string key);
-        void insert_font(std::string file, std::string key, int fsize);
+        void insert_font(std::string file, std::string key, std::string text, 
+            size_t size, int r, int g, int b, int a=255);
         void generate();
         void bind();
         void unbind();
         GLuint get_id() const;
         GLsizei get_w() const;
         GLsizei get_h() const;
-        const LayerX& operator[](std::string key); 
+        const Layer& operator[](std::string key); 
     private:
-
-    private:
-        std::unordered_map<std::string, LayerX> _map;
+        std::unordered_map<std::string, std::unique_ptr<Layer>> _map;
         GLsizei _w, _h, _size;
         GLuint _texture, _id;
     };

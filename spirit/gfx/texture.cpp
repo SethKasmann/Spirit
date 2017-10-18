@@ -8,6 +8,7 @@ namespace spirit {
         // Set the GL blend mode.
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
 
         // Initialize SDL Image
         const int flags = IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF;
@@ -52,13 +53,14 @@ namespace spirit {
 
     void Texture::insert_image(std::string file, std::string key)
     {
-        _map[key] = LayerX(file);
+        _map[key] = std::unique_ptr<Layer>(new Image(file));
         _size++;
     }
 
-    void Texture::insert_font(std::string file, std::string key, int fsize)
+    void Texture::insert_font(std::string file, std::string key, 
+        std::string text, size_t size, int r, int g, int b, int a)
     {
-        _map[key] = LayerX(file, fsize);
+        _map[key] = std::unique_ptr<Layer>(new Font(file, text, size, r, g, b, a));
         _size++;
     }
 
@@ -68,9 +70,9 @@ namespace spirit {
         // the max w and h of all the surfaces.
         for (auto it = _map.begin(); it != _map.end(); ++it)
         {
-            it->second.init(std::distance(_map.begin(), it));
-            _w = std::max(_w, it->second.w);
-            _h = std::max(_h, it->second.h);
+            it->second->load();
+            _w = std::max(_w, it->second->get_w());
+            _h = std::max(_h, it->second->get_h());
         }
 
         // Generate and bind the texture in OpenGL.
@@ -87,8 +89,8 @@ namespace spirit {
         std::cout << "Main W / H: " << _w << " " << _h << '\n';
         for (auto it = _map.begin(); it != _map.end(); ++it)
         {
-            it->second.generate(_w, _h);
-            it->second.free();
+            it->second->generate(_w, _h, std::distance(_map.begin(), it));
+            it->second->free();
         }
 
         // Set texture parameters.
@@ -112,7 +114,7 @@ namespace spirit {
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
-    const LayerX& Texture::operator[](std::string key)
+    const Layer& Texture::operator[](std::string key)
     {
         // Confirm the key is in the map.
         auto it = _map.find(key);
@@ -122,7 +124,7 @@ namespace spirit {
                       << " not found in map.\n";
         }
         // Return a reference to the layer.
-        return it->second;
+        return *(it->second);
     }
 
     GLuint Texture::get_id() const
