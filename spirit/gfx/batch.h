@@ -8,6 +8,7 @@
 #include "object2d.h"
 #include "renderer2d.h"
 #include "texture.h"
+#include "window.h"
 
 namespace spirit {
 
@@ -15,8 +16,10 @@ namespace spirit {
 	{
 	public:
 		Batch(Shader* shader, Texture* texture, const glm::mat4& pr_mat);
+		Batch(Shader* shader, Texture* texture, const Window& window);
 		void push(const Object2d* element);
 		void render();
+		void clear();
 	private:
 		Shader* _shader;
 		Texture* _texture;

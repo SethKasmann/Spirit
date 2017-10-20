@@ -13,23 +13,22 @@
 
 namespace spirit {
 
-    #define MAX_BUFFER_SIZE 12000
+#define MAX_BUFFER_SIZE 12000
 
-    class Renderer2d
-    {
-    public:
-        Renderer2d();
-        void push(const Object2d* obj);
-        void bind();
-        void unbind();
-        void render();
-    private:
-        GLuint _vao;
-        GLuint _vbo;
-        IndexBuffer _ibo;
-        Vertex* _vertex_ptr;
-    };
+class Renderer2d {
+public:
+  Renderer2d();
+  void push(const Object2d *obj);
+  void bind();
+  void unbind();
+  void render();
 
+private:
+  GLuint _vao;
+  GLuint _vbo;
+  IndexBuffer _ibo;
+  Vertex *_vertex_ptr;
+};
 }
 
 #endif

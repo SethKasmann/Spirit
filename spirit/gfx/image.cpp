@@ -3,7 +3,7 @@
 namespace spirit {
 
     Image::Image(std::string file)
-    : Layer(file)
+    : SubTexture(file)
     , _surface(nullptr)
     {}
 
@@ -41,15 +41,9 @@ namespace spirit {
     }
 
     // Generate the OpenGL Sub image within the 3D texture.
-    void Image::generate(int w, int h, int z)
+    void Image::generate(int w, int h)
     {
-        // Calculate the position. Z is given based on the layer number,
-        // x and y offsets are calculated based on the layer size compared
-        // to the 3D texture size.
-        _position.x = w - _w;
-        _position.y = h - _h;
-        _position.z = z;
-
+        // Generate the sub image of our 3D texture.
         glTexSubImage3D(GL_TEXTURE_2D_ARRAY,
                         0,
                         _position.x,
@@ -63,10 +57,10 @@ namespace spirit {
                         _surface->pixels);
 
         // Set the texture coordinates. A game object can copy these
-        // coordinates to refer to this image.
-        _coordinates[0] = glm::vec3(_position.x / w, 1.0f,            _position.z);
-        _coordinates[1] = glm::vec3(1.0f,            1.0f,            _position.z);
-        _coordinates[2] = glm::vec3(1.0f,            _position.y / h, _position.z);
+        // coordinates to refer to this part of the image.
+        _coordinates[0] = glm::vec3(_position.x / w, (_position.y + _h) / h, _position.z);
+        _coordinates[1] = glm::vec3((_position.x + _w) / w,(_position.y + _h) / h, _position.z);
+        _coordinates[2] = glm::vec3((_position.x + _w) / w, _position.y / h, _position.z);
         _coordinates[3] = glm::vec3(_position.x / w, _position.y / h, _position.z);     
     }
 

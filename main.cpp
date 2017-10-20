@@ -16,6 +16,7 @@
 #include "batch.h"
 #include "texture.h"
 #include "font.h"
+#include "inputhandler.h"
 #include <cmath>
 #include <vector>
 #include <memory>
@@ -26,6 +27,7 @@ int main()
 {
     //srand(time(NULL));
     spirit::Window window("Test", 960, 540);
+    spirit::InputHandler input;
 
     spirit::Shader shader("spirit/shader/basic.vert", "spirit/shader/basic.frag");
 
@@ -34,6 +36,9 @@ int main()
     texture.insert_image("spirit/image/bomb0.png", "bomb0");
     texture.insert_image("spirit/image/bomb2.png", "bomb2");
     texture.insert_font("spirit/font/OpenSans.ttf", "hello", "Hello World!", 12, 0, 255, 0);
+    texture.insert_font("spirit/font/OpenSans.ttf", "whatsup", "What is up my brother i haven't heard from you in\n forever", 30, 0, 255, 0);
+    texture.insert_font("spirit/font/OpenSans.ttf", "test2", "hi", 5, 0, 255, 0);
+    texture.insert_font("spirit/font/OpenSans.ttf", "test1", "?", 8, 0, 255, 0);
     texture.generate();
 
     std::vector<spirit::Object2d> sprites;
@@ -51,13 +56,13 @@ int main()
             case 2:
                 sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), texture, "bomb2"));
                 break;
-            case 3:
-                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), texture, "hello"));
-                break;
         }
     }
+    sprites.push_back(spirit::Object2d(glm::vec3(0, 0, 0), texture, "hello"));
+    sprites.push_back(spirit::Object2d(glm::vec3(100, 100, 0), texture, "whatsup"));
+    sprites.push_back(spirit::Object2d(glm::vec3(300, 300, 0), texture, "test2"));
 
-    spirit::Batch batch(&shader, &texture, glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f));
+    spirit::Batch batch(&shader, &texture, window);
     for (auto& e : sprites)
     {
         batch.push(&e);
@@ -68,6 +73,10 @@ int main()
     spirit::FPSCounter fps;
     while (!window.closed())
     {
+        if (input.keydown(SDL_SCANCODE_W))
+        {
+            window._camera.update_position(1.0f, 0.0f);
+        }
         window.mouse_position(&x, &y);
         shader.enable();
         texture.bind();
@@ -83,7 +92,8 @@ int main()
         int error = glGetError();
         if (error)
             std::cout << "GL ERROR: " << error << '\n';
-            
+
+
     }
 
     return 0;

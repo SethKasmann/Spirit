@@ -12,6 +12,7 @@ namespace spirit {
     : _closed(false)
     , _window(nullptr)
     , _context(nullptr)
+    , _camera()
     {
 
         _self = this;
@@ -72,6 +73,9 @@ namespace spirit {
         // Set SDL event callback.
         SDL_AddEventWatch(event_watch_callback, NULL);
 
+        // Set the camera ortho and update the camera.
+        _camera.set_ortho(w, h);
+        _camera.update();
     }
 
     Window::~Window()
@@ -147,6 +151,7 @@ namespace spirit {
             {
                 if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
                 {
+                    _self->_camera.set_ortho(_self->get_w(), _self->get_h());
                     _self->resize();
                 }
                 else if (event->window.event == SDL_WINDOWEVENT_CLOSE)
@@ -162,6 +167,7 @@ namespace spirit {
     // Swap the GL buffer.
     void Window::update()
     {
+        _camera.update();
         SDL_Event e;
         SDL_PumpEvents();
         SDL_GL_SwapWindow(_window);
@@ -184,6 +190,11 @@ namespace spirit {
         int ret;
         SDL_GetWindowSize(_window, nullptr, &ret);
         return ret;
+    }
+
+    const glm::mat4& Window::get_mat() const
+    {
+        return _camera.get_mat();
     }
 
 }

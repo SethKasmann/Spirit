@@ -1,11 +1,11 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "layer.h"
+#include "subtexture.h"
 
 namespace spirit {
 
-	class Font : public Layer
+	class Font : public SubTexture
 	{
 	public:
 		Font(std::string file, std::string text, size_t size, int r, int g,
@@ -13,7 +13,7 @@ namespace spirit {
 		~Font();
 		void load();
 		void free();
-		void generate(int w, int h, int z);
+		void generate(int w, int h);
 		const std::array<glm::vec3, 4>& operator[](int i) const;
 	private:
 		std::string _text;

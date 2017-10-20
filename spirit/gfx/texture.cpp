@@ -53,15 +53,44 @@ namespace spirit {
 
     void Texture::insert_image(std::string file, std::string key)
     {
-        _map[key] = std::unique_ptr<Layer>(new Image(file));
-        _size++;
+        _map[key] = std::unique_ptr<SubTexture>(new Image(file));
     }
 
     void Texture::insert_font(std::string file, std::string key, 
         std::string text, size_t size, int r, int g, int b, int a)
     {
-        _map[key] = std::unique_ptr<Layer>(new Font(file, text, size, r, g, b, a));
-        _size++;
+        _map[key] = std::unique_ptr<SubTexture>(new Font(file, text, size, r, g, b, a));
+    }
+
+    // Algorithm to pack each SubTexture within a 3D Open GL texture
+    // while minimizing the height as much as possible.
+    void Texture::fit(std::unordered_map<std::string, std::unique_ptr<SubTexture>>::iterator begin,
+                      std::unordered_map<std::string, std::unique_ptr<SubTexture>>::iterator end,
+                      int x, int y, int z, int w, int h)
+    {
+        // Check if the width or height is 0
+        if (w == 0 || h == 0)
+            return;
+
+        for (; begin != end; ++begin)
+        {
+            // Continue if the sub texture has already been placed.
+            if (begin->second->get_placed())
+                continue;
+
+            if (begin->second->get_w() <= w && begin->second->get_h() <= h)
+            {
+                // Set the position and the placed flag of this sub texture.
+                begin->second->set_position(glm::vec3(x + w - begin->second->get_w(), y + h - begin->second->get_h(), z));
+                begin->second->set_placed(true);
+                // Recursive call to the left region remaining.
+                fit(std::next(begin), end, 0, 0, z, w - begin->second->get_w(), h);
+                // Recurive call to the upper region remaining.
+                fit(std::next(begin), end, x + w - begin->second->get_w(), 0, z, w, h - begin->second->get_h());
+                break;
+            }
+        }
+        return;
     }
 
     void Texture::generate()
@@ -75,6 +104,19 @@ namespace spirit {
             _h = std::max(_h, it->second->get_h());
         }
 
+        // Iterate through the map and run the fit function. This will set the
+        // location (x, y, z) of each 2D sub texture. It will also determine
+        // the height needed for the 3D texture.
+        for (auto it = _map.begin(); it != _map.end(); ++it)
+        {
+            if (it->second->get_placed())
+                continue;
+
+            fit(it, _map.end(), 0, 0, _size, _w, _h);
+
+            ++_size;
+        }
+
         // Generate and bind the texture in OpenGL.
         glGenTextures(1, &_texture);
         bind();
@@ -86,10 +128,9 @@ namespace spirit {
 
         // Generate each layer. After the layer is generated free the SDL
         // surface. 
-        std::cout << "Main W / H: " << _w << " " << _h << '\n';
         for (auto it = _map.begin(); it != _map.end(); ++it)
         {
-            it->second->generate(_w, _h, std::distance(_map.begin(), it));
+            it->second->generate(_w, _h);
             it->second->free();
         }
 
@@ -114,7 +155,7 @@ namespace spirit {
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
-    const Layer& Texture::operator[](std::string key)
+    const SubTexture& Texture::operator[](std::string key)
     {
         // Confirm the key is in the map.
         auto it = _map.find(key);

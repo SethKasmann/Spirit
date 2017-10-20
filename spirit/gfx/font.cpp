@@ -4,7 +4,7 @@ namespace spirit {
 
     Font::Font(std::string file, std::string text, size_t size, int r, int g,
         int b, int a)
-    : Layer(file)
+    : SubTexture(file)
     , _text(text)
     , _surface(nullptr)
     , _size(size)
@@ -56,14 +56,11 @@ namespace spirit {
     }
 
     // Generate the OpenGL Sub Font within the 3D texture.
-    void Font::generate(int w, int h, int z)
+    void Font::generate(int w, int h)
     {
         // Calculate the position. Z is given based on the layer number,
         // x and y offsets are calculated based on the layer size compared
         // to the 3D texture size.
-        _position.x = w - _w;
-        _position.y = h - _h;
-        _position.z = z;
 
         glTexSubImage3D(GL_TEXTURE_2D_ARRAY,
                         0,
@@ -78,10 +75,10 @@ namespace spirit {
                         _surface->pixels);
 
         // Set the texture coordinates. A game object can copy these
-        // coordinates to refer to this Font.
-        _coordinates[0] = glm::vec3(_position.x / w, 1.0f,            _position.z);
-        _coordinates[1] = glm::vec3(1.0f,            1.0f,            _position.z);
-        _coordinates[2] = glm::vec3(1.0f,            _position.y / h, _position.z);
+        // coordinates to refer to this part of the font.
+        _coordinates[0] = glm::vec3(_position.x / w, (_position.y + _h) / h, _position.z);
+        _coordinates[1] = glm::vec3((_position.x + _w) / w,(_position.y + _h) / h, _position.z);
+        _coordinates[2] = glm::vec3((_position.x + _w) / w, _position.y / h, _position.z);
         _coordinates[3] = glm::vec3(_position.x / w, _position.y / h, _position.z);     
     }
 
