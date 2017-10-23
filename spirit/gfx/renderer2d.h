@@ -28,6 +28,7 @@ private:
   GLuint _vbo;
   IndexBuffer _ibo;
   Vertex *_vertex_ptr;
+  size_t _size;
 };
 }
 

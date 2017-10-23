@@ -56,10 +56,12 @@ namespace spirit {
         _map[key] = std::unique_ptr<SubTexture>(new Image(file));
     }
 
-    void Texture::insert_font(std::string file, std::string key, 
-        std::string text, size_t size, int r, int g, int b, int a)
+    void Texture::insert_font(std::string file, std::string key, size_t size)
     {
-        _map[key] = std::unique_ptr<SubTexture>(new Font(file, text, size, r, g, b, a));
+        for (auto& c : _g_characters)
+        {
+            _map[key + _tag + c] = std::unique_ptr<SubTexture>(new Font(file, c, size));
+        }
     }
 
     // Algorithm to pack each SubTexture within a 3D Open GL texture
@@ -81,12 +83,13 @@ namespace spirit {
             if (begin->second->get_w() <= w && begin->second->get_h() <= h)
             {
                 // Set the position and the placed flag of this sub texture.
+                //std::cout << x + w - begin->second->get_w() << " " << y + h - begin->second->get_h() << '\n';
                 begin->second->set_position(glm::vec3(x + w - begin->second->get_w(), y + h - begin->second->get_h(), z));
                 begin->second->set_placed(true);
                 // Recursive call to the left region remaining.
-                fit(std::next(begin), end, 0, 0, z, w - begin->second->get_w(), h);
+                fit(std::next(begin), end, 0, 0, z, w - begin->second->get_w() - 1, h);
                 // Recurive call to the upper region remaining.
-                fit(std::next(begin), end, x + w - begin->second->get_w(), 0, z, w, h - begin->second->get_h());
+                fit(std::next(begin), end, x + w - begin->second->get_w() + 1, 0, z, w - begin->second->get_w() - 1, h - begin->second->get_h() - 1);
                 break;
             }
         }
@@ -155,7 +158,7 @@ namespace spirit {
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
-    const SubTexture& Texture::operator[](std::string key)
+    const SubTexture& Texture::operator[](std::string key) const
     {
         // Confirm the key is in the map.
         auto it = _map.find(key);

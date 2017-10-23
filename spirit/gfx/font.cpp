@@ -2,17 +2,16 @@
 
 namespace spirit {
 
-    Font::Font(std::string file, std::string text, size_t size, int r, int g,
-        int b, int a)
+    Font::Font(std::string file, std::string text, size_t size)
     : SubTexture(file)
     , _text(text)
     , _surface(nullptr)
     , _size(size)
     {
-        _color.r = r;
-        _color.g = g;
-        _color.b = b;
-        _color.a = a;
+        _color.r = 255;
+        _color.g = 255;
+        _color.b = 255;
+        _color.a = 255;
     }
 
     Font::~Font()
@@ -76,10 +75,20 @@ namespace spirit {
 
         // Set the texture coordinates. A game object can copy these
         // coordinates to refer to this part of the font.
-        _coordinates[0] = glm::vec3(_position.x / w, (_position.y + _h) / h, _position.z);
-        _coordinates[1] = glm::vec3((_position.x + _w) / w,(_position.y + _h) / h, _position.z);
-        _coordinates[2] = glm::vec3((_position.x + _w) / w, _position.y / h, _position.z);
-        _coordinates[3] = glm::vec3(_position.x / w, _position.y / h, _position.z);     
+        float idnt_w = .5 / w;
+        float idnt_h = .5 / h;
+        _coordinates[0] = glm::vec3(_position.x / w + idnt_w, (_position.y + _h) / h - idnt_h, _position.z);
+        _coordinates[1] = glm::vec3((_position.x + _w) / w - idnt_w,(_position.y + _h) / h - idnt_h, _position.z);
+        _coordinates[2] = glm::vec3((_position.x + _w) / w - idnt_w, _position.y / h + idnt_h, _position.z);
+        _coordinates[3] = glm::vec3(_position.x / w + idnt_w, _position.y / h + idnt_h, _position.z); 
+
+        std::cout << "max w, h:" << w << " " << h << '\n';
+        std::cout << "my w, h: " << _w << " " << _h << '\n';
+        std::cout << _text << '\n';
+        for (auto e : _coordinates)
+        {
+            std::cout << e.x << " " << e.y << " " << e.z << '\n';
+        }    
     }
 
     // [] operator to access the texture coordinates. For an Font, this

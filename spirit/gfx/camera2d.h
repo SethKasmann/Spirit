@@ -15,18 +15,17 @@ namespace spirit
         Camera2d();
         Camera2d(float x, float y);
         void set_position(float x, float y);
-        void update_position(float x, float y);
-        void set_scale(float scale);
-        void update_scale(float dscale);
         void set_ortho(int w, int h);
-        void update();
-        const glm::mat4& get_mat() const;
+        void set_scale(float scale);
+        void zoom(float scale);
+        void move(float dx, float dy);
+        const glm::mat4& get_mat();
     private:
         bool _changed;
         float _scale;
         glm::vec2 _position;
         glm::mat4 _ortho;
-        glm::mat4 _camera_mat;
+        glm::mat4 _camera;
     };
 }
 

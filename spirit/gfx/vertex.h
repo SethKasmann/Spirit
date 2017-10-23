@@ -3,6 +3,7 @@
 
 #include "glm.hpp"
 #include <cstddef>
+#include <iostream>
 
 namespace spirit {
 

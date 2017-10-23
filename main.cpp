@@ -35,48 +35,67 @@ int main()
     texture.insert_image("spirit/image/bomb1.png", "bomb1");
     texture.insert_image("spirit/image/bomb0.png", "bomb0");
     texture.insert_image("spirit/image/bomb2.png", "bomb2");
-    texture.insert_font("spirit/font/OpenSans.ttf", "hello", "Hello World!", 12, 0, 255, 0);
-    texture.insert_font("spirit/font/OpenSans.ttf", "whatsup", "What is up my brother i haven't heard from you in\n forever", 30, 0, 255, 0);
-    texture.insert_font("spirit/font/OpenSans.ttf", "test2", "hi", 5, 0, 255, 0);
-    texture.insert_font("spirit/font/OpenSans.ttf", "test1", "?", 8, 0, 255, 0);
+    //texture.insert_font("spirit/font/OpenSans.ttf", "whatsup", "What is up my brother i haven't heard from you in\n forever", 30, 0, 255, 0);
+    //texture.insert_font("spirit/font/OpenSans.ttf", "test2", "hi", 5, 0, 255, 0);
+    //texture.insert_font("spirit/font/OpenSans.ttf", "test1", "?", 8, 0, 255, 0);
+    texture.insert_font("spirit/font/OpenSans.ttf", "sans_test", 30);
     texture.generate();
 
-    std::vector<spirit::Object2d> sprites;
+    spirit::Text text(glm::vec3(0, 0, 0), texture, "sans_test", "hi", 255, 0, 0, 255);
 
-    for (int i = 0; i < 540; i += 64)
+    std::vector<spirit::Object2d> sprites;
+/*
+    for (int i = 0; i < 960; i += 15)
     {
-        switch (rand() % 3)
+        for (int j = 0; j < 540; j += 15)
         {
-            case 0:
-                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), texture, "bomb1"));
-                break;
-            case 1:
-                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), texture, "bomb0"));
-                break;
-            case 2:
-                sprites.push_back(spirit::Object2d(glm::vec3(0, i, 0), texture, "bomb2"));
-                break;
+            switch (rand() % 3)
+            {
+                case 0:
+                    sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(15, 15), texture, "bomb1"));
+                    break;
+                case 1:
+                    sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(15, 15), texture, "bomb0"));
+                    break;
+                case 2:
+                    sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(15, 15), texture, "bomb2"));
+                    break;
+            }
         }
-    }
-    sprites.push_back(spirit::Object2d(glm::vec3(0, 0, 0), texture, "hello"));
-    sprites.push_back(spirit::Object2d(glm::vec3(100, 100, 0), texture, "whatsup"));
-    sprites.push_back(spirit::Object2d(glm::vec3(300, 300, 0), texture, "test2"));
+    }*/
+    //sprites.push_back(spirit::Object2d(glm::vec3(100, 100, 0), texture, "whatsup"));
+    //sprites.push_back(spirit::Object2d(glm::vec3(300, 300, 0), texture, "test2"));
 
     spirit::Batch batch(&shader, &texture, window);
+    /*
     for (auto& e : sprites)
     {
         batch.push(&e);
     }
+    */
+
 
     int x, y;
 
     spirit::FPSCounter fps;
     while (!window.closed())
     {
+        batch.push(&text);
         if (input.keydown(SDL_SCANCODE_W))
-        {
-            window._camera.update_position(1.0f, 0.0f);
-        }
+            window.get_camera().move(0.0f, -0.1f);
+        if (input.keydown(SDL_SCANCODE_S))
+            window.get_camera().move(0.0f, 0.1f);
+        if (input.keydown(SDL_SCANCODE_D))
+            window.get_camera().move(-0.1f, 0.0f);
+        if (input.keydown(SDL_SCANCODE_A))
+            window.get_camera().move(0.1f, 0.0f);
+
+        if (input.keydown(SDL_SCANCODE_EQUALS))
+            window.get_camera().zoom(0.01f);
+        else if (input.keydown(SDL_SCANCODE_MINUS))
+            window.get_camera().zoom(-0.01f);
+
+        batch.set_projection(window.get_camera().get_mat());
         window.mouse_position(&x, &y);
         shader.enable();
         texture.bind();
@@ -87,7 +106,11 @@ int main()
         window.update();
         
         if (fps.update())
-            std::cout << fps << '\n';
+        {
+            text.set_text(texture, "sans_test", fps.to_string(), 255, 0, 0, 255);
+            std::cout << text.get_w() << " " << text.get_h() << '\n';
+            std::cout << fps.to_string() << '\n';
+        }
 
         int error = glGetError();
         if (error)

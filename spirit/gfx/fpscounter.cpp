@@ -26,6 +26,11 @@ namespace spirit {
 		_time  = SDL_GetTicks();
 	}
 
+	std::string FPSCounter::to_string()
+	{
+		return std::string("fps ") + std::to_string(_fps);
+	}
+
 	std::ostream& operator<<(std::ostream& o, const FPSCounter& f)
 	{
 		o << "FPS: " << f._fps;

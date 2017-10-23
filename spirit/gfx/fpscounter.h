@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <cstdint>
 #include <iostream>
+#include <string>
 
 namespace spirit {
 
@@ -15,6 +16,7 @@ namespace spirit {
 		FPSCounter();
 		bool update();
 		void clear();
+		std::string to_string();
 		friend std::ostream& operator<<(std::ostream& o, const FPSCounter& f);
 	private:
 		uint32_t _fps, _count, _time;

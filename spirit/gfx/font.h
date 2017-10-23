@@ -8,8 +8,7 @@ namespace spirit {
 	class Font : public SubTexture
 	{
 	public:
-		Font(std::string file, std::string text, size_t size, int r, int g,
-			int b, int a);
+		Font(std::string file, std::string text, size_t size);
 		~Font();
 		void load();
 		void free();
@@ -22,6 +21,16 @@ namespace spirit {
         SDL_Color _color;
         size_t _size;
 	};
+/*
+	class FontNew : public SubTexture
+	{
+	public:
+		Font(std::string file, size_t size, int r, int g, int b, int a)
+		{
+
+		}
+	private:
+	};*/
 
 }
 

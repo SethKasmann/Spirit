@@ -2,7 +2,7 @@
 
 namespace spirit {
 
-Renderer2d::Renderer2d() : _vertex_ptr(nullptr) {
+Renderer2d::Renderer2d() : _vertex_ptr(nullptr), _size(0) {
   // Generate the VAO and VBO
   glGenVertexArrays(1, &_vao);
   glGenBuffers(1, &_vbo);
@@ -28,7 +28,8 @@ Renderer2d::Renderer2d() : _vertex_ptr(nullptr) {
 
   // Attribute pointer for the color
   glVertexAttribPointer(color_location, color_count, GL_UNSIGNED_BYTE, GL_TRUE,
-                        vertex_stride, reinterpret_cast<void *>(color_offset));
+                        vertex_stride, 
+                        reinterpret_cast<void *>(color_offset));
 
   // Attribute pointer for the texture coordinates
   glVertexAttribPointer(texture_location, texture_count, GL_FLOAT, GL_FALSE,
@@ -74,53 +75,43 @@ void Renderer2d::unbind() {
 }
 
 void Renderer2d::push(const Object2d *obj) {
-  uint32_t color = 0;
-  GLfloat tex_id = 0.0;
 
-  if (!obj->tex_flag)
-    color = obj->get_ui_color();
-  else
-    tex_id = 1.0;
+  uint32_t color = obj->get_color();
+  float tex_id = obj->get_type();
 
   _vertex_ptr->position.x = obj->get_pos().x;
   _vertex_ptr->position.y = obj->get_pos().y;
   _vertex_ptr->position.z = obj->get_pos().z;
   _vertex_ptr->color = color;
-  _vertex_ptr->tex.x = obj->get_tex_coords()[0].x;
-  _vertex_ptr->tex.y = obj->get_tex_coords()[0].y;
-  _vertex_ptr->tex.z = obj->get_tex_coords()[0].z;
+  _vertex_ptr->tex = obj->get_tex_coords()[0];
   _vertex_ptr->tex_id = tex_id;
   _vertex_ptr++;
 
-  _vertex_ptr->position.x = obj->get_pos().x + obj->get_size().x;
+  _vertex_ptr->position.x = obj->get_pos().x + obj->get_w();
   _vertex_ptr->position.y = obj->get_pos().y;
   _vertex_ptr->position.z = obj->get_pos().z;
   _vertex_ptr->color = color;
-  _vertex_ptr->tex.x = obj->get_tex_coords()[1].x;
-  _vertex_ptr->tex.y = obj->get_tex_coords()[1].y;
-  _vertex_ptr->tex.z = obj->get_tex_coords()[1].z;
+  _vertex_ptr->tex = obj->get_tex_coords()[1];
   _vertex_ptr->tex_id = tex_id;
   _vertex_ptr++;
 
-  _vertex_ptr->position.x = obj->get_pos().x + obj->get_size().x;
-  _vertex_ptr->position.y = obj->get_pos().y + obj->get_size().y;
+  _vertex_ptr->position.x = obj->get_pos().x + obj->get_w();
+  _vertex_ptr->position.y = obj->get_pos().y + obj->get_h();
   _vertex_ptr->position.z = obj->get_pos().z;
   _vertex_ptr->color = color;
-  _vertex_ptr->tex.x = obj->get_tex_coords()[2].x;
-  _vertex_ptr->tex.y = obj->get_tex_coords()[2].y;
-  _vertex_ptr->tex.z = obj->get_tex_coords()[2].z;
+  _vertex_ptr->tex = obj->get_tex_coords()[2];
   _vertex_ptr->tex_id = tex_id;
   _vertex_ptr++;
 
   _vertex_ptr->position.x = obj->get_pos().x;
-  _vertex_ptr->position.y = obj->get_pos().y + obj->get_size().y;
+  _vertex_ptr->position.y = obj->get_pos().y + obj->get_h();
   _vertex_ptr->position.z = obj->get_pos().z;
   _vertex_ptr->color = color;
-  _vertex_ptr->tex.x = obj->get_tex_coords()[3].x;
-  _vertex_ptr->tex.y = obj->get_tex_coords()[3].y;
-  _vertex_ptr->tex.z = obj->get_tex_coords()[3].z;
+  _vertex_ptr->tex = obj->get_tex_coords()[3];
   _vertex_ptr->tex_id = tex_id;
   _vertex_ptr++;
+
+  _size++;
 }
 
 void Renderer2d::render() {

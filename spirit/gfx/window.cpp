@@ -75,7 +75,6 @@ namespace spirit {
 
         // Set the camera ortho and update the camera.
         _camera.set_ortho(w, h);
-        _camera.update();
     }
 
     Window::~Window()
@@ -167,7 +166,6 @@ namespace spirit {
     // Swap the GL buffer.
     void Window::update()
     {
-        _camera.update();
         SDL_Event e;
         SDL_PumpEvents();
         SDL_GL_SwapWindow(_window);
@@ -192,9 +190,10 @@ namespace spirit {
         return ret;
     }
 
-    const glm::mat4& Window::get_mat() const
+    // Get the window camera object.
+    Camera2d& Window::get_camera()
     {
-        return _camera.get_mat();
+        return _camera;
     }
 
 }

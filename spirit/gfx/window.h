@@ -25,9 +25,9 @@ namespace spirit {
         void mouse_position(int* x, int* y) const;
         int get_w() const;
         int get_h() const;
-        const glm::mat4& get_mat() const;
-        Camera2d _camera;
+        Camera2d& get_camera();
     private:
+        Camera2d _camera;
         bool _closed;
         SDL_Window* _window;
         SDL_GLContext _context;

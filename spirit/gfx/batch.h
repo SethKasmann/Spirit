@@ -16,10 +16,12 @@ namespace spirit {
 	{
 	public:
 		Batch(Shader* shader, Texture* texture, const glm::mat4& pr_mat);
-		Batch(Shader* shader, Texture* texture, const Window& window);
+		Batch(Shader* shader, Texture* texture, Window& window);
 		void push(const Object2d* element);
+		void push(const Text* text);
 		void render();
 		void clear();
+		void set_projection(const glm::mat4& projection);
 	private:
 		Shader* _shader;
 		Texture* _texture;
