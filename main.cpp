@@ -25,62 +25,40 @@
 
 int main()
 {
-    //srand(time(NULL));
     spirit::Window window("Test", 960, 540);
     spirit::InputHandler input;
-
     spirit::Shader shader("spirit/shader/basic.vert", "spirit/shader/basic.frag");
 
     spirit::Texture texture;
     texture.insert_image("spirit/image/bomb1.png", "bomb1");
     texture.insert_image("spirit/image/bomb0.png", "bomb0");
     texture.insert_image("spirit/image/bomb2.png", "bomb2");
-    //texture.insert_font("spirit/font/OpenSans.ttf", "whatsup", "What is up my brother i haven't heard from you in\n forever", 30, 0, 255, 0);
-    //texture.insert_font("spirit/font/OpenSans.ttf", "test2", "hi", 5, 0, 255, 0);
-    //texture.insert_font("spirit/font/OpenSans.ttf", "test1", "?", 8, 0, 255, 0);
     texture.insert_font("spirit/font/OpenSans.ttf", "sans_test", 30);
     texture.generate();
 
     spirit::Text text(glm::vec3(0, 0, 0), texture, "sans_test", "hi", 255, 0, 0, 255);
 
     std::vector<spirit::Object2d> sprites;
-/*
-    for (int i = 0; i < 960; i += 15)
+
+    for (int i = 0; i < 960; i += 10)
     {
-        for (int j = 0; j < 540; j += 15)
+        for (int j = 0; j < 540; j += 10)
         {
-            switch (rand() % 3)
-            {
-                case 0:
-                    sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(15, 15), texture, "bomb1"));
-                    break;
-                case 1:
-                    sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(15, 15), texture, "bomb0"));
-                    break;
-                case 2:
-                    sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), glm::vec2(15, 15), texture, "bomb2"));
-                    break;
-            }
+            sprites.push_back(spirit::Object2d(glm::vec3(i, j, 0), 10, 10, texture, "bomb1"));
         }
-    }*/
-    //sprites.push_back(spirit::Object2d(glm::vec3(100, 100, 0), texture, "whatsup"));
-    //sprites.push_back(spirit::Object2d(glm::vec3(300, 300, 0), texture, "test2"));
-
-    spirit::Batch batch(&shader, &texture, window);
-    /*
-    for (auto& e : sprites)
-    {
-        batch.push(&e);
     }
-    */
 
+    spirit::Batch batch(&shader, &texture);
+    //spirit::Batch batch2(&shader, &texture, );
 
     int x, y;
 
     spirit::FPSCounter fps;
     while (!window.closed())
     {
-        batch.push(&text);
+        //batch.push(&text);
+        for (auto& s : sprites)
+            batch.push(&s);
         if (input.keydown(SDL_SCANCODE_W))
             window.get_camera().move(0.0f, -0.1f);
         if (input.keydown(SDL_SCANCODE_S))
@@ -95,7 +73,8 @@ int main()
         else if (input.keydown(SDL_SCANCODE_MINUS))
             window.get_camera().zoom(-0.01f);
 
-        batch.set_projection(window.get_camera().get_mat());
+        batch.set_projection(window.get_camera().get_projection());
+        batch.set_modelview(window.get_camera().get_modelview());
         window.mouse_position(&x, &y);
         shader.enable();
         texture.bind();
@@ -108,7 +87,6 @@ int main()
         if (fps.update())
         {
             text.set_text(texture, "sans_test", fps.to_string(), 255, 0, 0, 255);
-            std::cout << text.get_w() << " " << text.get_h() << '\n';
             std::cout << fps.to_string() << '\n';
         }
 

@@ -21,7 +21,7 @@ class Object2d {
 public:
   Object2d(const glm::vec3 &pos, int w, int h, 
   uint8_t r, uint8_t g, uint8_t b, uint8_t a=255);
-  Object2d(const glm::vec3 &pos, const Texture &texture, const std::string& key);
+  Object2d(const glm::vec3 &pos, int w, int h, const Texture &texture, const std::string& key);
   Object2d(const glm::vec3 &pos, const Texture &texture, const std::string& key,
   uint8_t r, uint8_t g, uint8_t b, uint8_t a=255);
   uint32_t get_color() const;

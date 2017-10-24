@@ -26,5 +26,5 @@ void main()
 	out_data.tex_id = tex_id;
 
 	// set gl position.
-    gl_Position = pr_matrix * vw_matrix * ml_matrix * vec4(position, 1.0);
+    gl_Position = pr_matrix * ml_matrix * vec4(position, 1.0);
 }

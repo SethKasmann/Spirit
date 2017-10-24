@@ -19,13 +19,14 @@ namespace spirit
         void set_scale(float scale);
         void zoom(float scale);
         void move(float dx, float dy);
-        const glm::mat4& get_mat();
+        const glm::mat4& get_projection() const;
+        const glm::mat4& get_modelview();
     private:
-        bool _changed;
+        bool _update;
         float _scale;
         glm::vec2 _position;
-        glm::mat4 _ortho;
-        glm::mat4 _camera;
+        glm::mat4 _projection;
+        glm::mat4 _modelview;
     };
 }
 

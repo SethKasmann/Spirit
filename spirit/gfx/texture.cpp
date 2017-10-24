@@ -127,8 +127,6 @@ namespace spirit {
         // Allocate the storage in OpenGL.
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, _w, _h, _size);
 
-        // TODO: add mipmaps
-
         // Generate each layer. After the layer is generated free the SDL
         // surface. 
         for (auto it = _map.begin(); it != _map.end(); ++it)
@@ -137,8 +135,10 @@ namespace spirit {
             it->second->free();
         }
 
+        //glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+
         // Set texture parameters.
-        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER,GL_LINEAR/*_MIPMAP_NEAREST*/);
         glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);

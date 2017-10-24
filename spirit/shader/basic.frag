@@ -30,7 +30,7 @@ void main()
     }
     else if (out_data.tex_id == OBJ_TEXTURE)
     {
-        color = texture(tex_array, out_data.tex_coord); //* intensity;
+        color = texture(tex_array, out_data.tex_coord);// * intensity;
     }
     else if (out_data.tex_id == OBJ_TEXT)
     {

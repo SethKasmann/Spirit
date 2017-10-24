@@ -20,10 +20,10 @@ Object2d::Object2d(const glm::vec3 &pos, int w, int h,
   _tex_coords[3] = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
-Object2d::Object2d(const glm::vec3 &pos, const Texture &texture, const std::string& key)
+Object2d::Object2d(const glm::vec3 &pos, int w, int h, const Texture &texture, const std::string& key)
     : _pos(pos), _type(obj_texture), _color(0) {
-  _w = texture[key].get_w();
-  _h = texture[key].get_h();
+  _w = w;
+  _h = h;
   _tex_coords = texture[key][0];
 }
 

@@ -13,20 +13,23 @@
 
 namespace spirit {
 
-#define MAX_BUFFER_SIZE 12000
+#define MAX_BUFFER_SIZE 10000
+
+static const int MAX_VBO_SIZE = 10000 * 4;
+static const int MAX_IBO_SIZE = 10000 * 6;
 
 class Renderer2d {
 public:
   Renderer2d();
   void push(const Object2d *obj);
-  void bind();
-  void unbind();
+  void begin();
+  void end();
   void render();
 
 private:
-  GLuint _vao;
   GLuint _vbo;
-  IndexBuffer _ibo;
+  GLuint _vao;
+  GLuint _ibo;
   Vertex *_vertex_ptr;
   size_t _size;
 };
