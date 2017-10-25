@@ -8,7 +8,6 @@
 #include "glm.hpp"
 #include "GL/glew.h"
 #include "vertex.h"
-#include "dynamicbuffer.h"
 #include "object2d.h"
 
 namespace spirit {

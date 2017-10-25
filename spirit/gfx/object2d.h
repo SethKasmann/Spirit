@@ -1,8 +1,6 @@
 #ifndef OBJECT2D_H
 #define OBJECT2D_H
 
-#include "buffer.h"
-#include "vertexarray.h"
 #include "glm.hpp"
 #include "texture.h"
 #include <array>

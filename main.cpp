@@ -6,8 +6,6 @@
 #include "window.h"
 #include "misc.h"
 #include "shader.h"
-#include "buffer.h"
-#include "vertexarray.h"
 #include "fpscounter.h"
 #include "object2d.h"
 #include "glm.hpp"
