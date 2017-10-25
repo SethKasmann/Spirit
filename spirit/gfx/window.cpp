@@ -9,7 +9,7 @@ namespace spirit {
 Window *Window::_self = nullptr;
 
 Window::Window(const char *name, int w, int h)
-    : _closed(false), _window(nullptr), _context(nullptr), _camera() {
+    : _closed(false), _window(nullptr), _context(nullptr), _camera(w, h) {
 
   _self = this;
   // Initialize SDL.
@@ -59,9 +59,6 @@ Window::Window(const char *name, int w, int h)
 
   // Set SDL event callback.
   SDL_AddEventWatch(event_watch_callback, NULL);
-
-  // Set the camera ortho and update the camera.
-  _camera.set_ortho(w, h);
 }
 
 Window::~Window() {
@@ -119,7 +116,8 @@ int Window::event_watch_callback(void *userdata, SDL_Event *event) {
   }
   case SDL_WINDOWEVENT: {
     if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-      _self->_camera.set_ortho(_self->get_w(), _self->get_h());
+      _self->_camera.set_projection(static_cast<float>(_self->get_w()),
+                                    static_cast<float>(_self->get_h()));
       _self->resize();
     } else if (event->window.event == SDL_WINDOWEVENT_CLOSE) {
       _self->set_closed(true);

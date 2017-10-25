@@ -1,6 +1,7 @@
 #ifndef CAMERA2D_H
 #define CAMERA2D_H
 
+#include <iostream>
 #include "glm.hpp"
 #include "matrix_transform.hpp"
 
@@ -10,10 +11,9 @@ namespace spirit {
 // camera movements.
 class Camera2d {
 public:
-  Camera2d();
-  Camera2d(float x, float y);
+  Camera2d(float w, float h);
   void set_position(float x, float y);
-  void set_ortho(int w, int h);
+  void set_projection(float w, float h);
   void set_scale(float scale);
   void zoom(float scale);
   void move(float dx, float dy);
@@ -22,6 +22,8 @@ public:
 
 private:
   bool _update;
+  float _w;
+  float _h;
   float _scale;
   glm::vec2 _position;
   glm::mat4 _projection;
