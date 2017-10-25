@@ -64,13 +64,6 @@ void Font::generate(int w, int h) {
                               _position.y / h + idnt_h, _position.z);
   _coordinates[3] = glm::vec3(_position.x / w + idnt_w,
                               _position.y / h + idnt_h, _position.z);
-
-  std::cout << "max w, h:" << w << " " << h << '\n';
-  std::cout << "my w, h: " << _w << " " << _h << '\n';
-  std::cout << _text << '\n';
-  for (auto e : _coordinates) {
-    std::cout << e.x << " " << e.y << " " << e.z << '\n';
-  }
 }
 
 // [] operator to access the texture coordinates. For an Font, this

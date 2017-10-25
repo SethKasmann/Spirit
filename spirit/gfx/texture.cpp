@@ -32,7 +32,6 @@ Texture::Texture() : _w(0), _h(0), _size(0), _texture(0), _id(0) {
     std::cout << "Texture::Texture() ERROR: _g_slots is full.\n";
   }
   _id = std::distance(_g_slots.begin(), it);
-  std::cout << "ID: " << _id << '\n';
 }
 
 Texture::Texture(std::string file, std::string key) : Texture() {}
