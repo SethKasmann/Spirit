@@ -5,33 +5,22 @@
 
 namespace spirit {
 
-	class Font : public SubTexture
-	{
-	public:
-		Font(std::string file, std::string text, size_t size);
-		~Font();
-		void load();
-		void free();
-		void generate(int w, int h);
-		const std::array<glm::vec3, 4>& operator[](int i) const;
-	private:
-		std::string _text;
-		std::array<glm::vec3, 4> _coordinates;
-        SDL_Surface* _surface;
-        SDL_Color _color;
-        size_t _size;
-	};
-/*
-	class FontNew : public SubTexture
-	{
-	public:
-		Font(std::string file, size_t size, int r, int g, int b, int a)
-		{
+class Font : public SubTexture {
+public:
+  Font(std::string file, std::string text, size_t size);
+  ~Font();
+  void load();
+  void free();
+  void generate(int w, int h);
+  const std::array<glm::vec3, 4> &operator[](int i) const;
 
-		}
-	private:
-	};*/
-
+private:
+  std::string _text;
+  std::array<glm::vec3, 4> _coordinates;
+  SDL_Surface *_surface;
+  SDL_Color _color;
+  size_t _size;
+};
 }
 
 #endif

@@ -64,7 +64,8 @@ Renderer2d::Renderer2d() : _vertex_ptr(nullptr), _size(0) {
   }
 
   // Copy the index data into the IBO object.
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAX_BUFFER_SIZE * 6 * sizeof(GLushort), &indicies[0], GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAX_BUFFER_SIZE * 6 * sizeof(GLushort),
+               &indicies[0], GL_STATIC_DRAW);
   // Unbind the IBO object
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -86,8 +87,7 @@ void Renderer2d::push(const Object2d *obj) {
   uint32_t color = obj->get_color();
   float tex_id = obj->get_type();
 
-  if (_size >= MAX_VBO_SIZE)
-  {
+  if (_size >= MAX_VBO_SIZE) {
     end();
     render();
     begin();
