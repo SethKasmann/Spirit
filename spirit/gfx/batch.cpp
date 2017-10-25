@@ -3,8 +3,8 @@
 namespace spirit {
 
 Batch::Batch(Shader *shader, Texture *texture)
-    : _shader(shader), _texture(texture), _projection(glm::mat4()),
-      _modelview(glm::mat4()) {
+    : _shader(shader), _texture(texture), _projection(glm::mat4(1)),
+      _modelview(glm::mat4(1)) {
   _texture->bind();
   _shader->enable();
   _shader->set_uniform_1i("tex_array", _texture->get_id());
@@ -27,7 +27,7 @@ void Batch::clear() { _elements.clear(); }
 void Batch::render() {
   _shader->enable();
   _shader->set_mat4_fv("pr_matrix", _projection);
-  _shader->set_mat4_fv("pr_matrix", _modelview);
+  _shader->set_mat4_fv("ml_matrix", _modelview);
   _texture->bind();
   _renderer.begin();
   for (int i = 0; i < _elements.size(); ++i) {
