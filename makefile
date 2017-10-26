@@ -1,7 +1,7 @@
 CXX 		= g++
 CXXFLAGS 	= -std=c++11
-SRC 		= main.cpp spirit/gfx/*.cpp
-INC			= -Ispirit/gfx -Ispirit/glm -Ispirit/glm/detail -Ispirit/glm/gtc -Ispirit/glm/gtx -Ispirit/glm/simd
+SRC 		= main.cpp spirit/gfx/*.cpp sandbox/*.cpp
+INC			= -Isandbox -Ispirit/gfx -Ispirit/glm -Ispirit/glm/detail -Ispirit/glm/gtc -Ispirit/glm/gtx -Ispirit/glm/simd
 LFLAGS		= -lSDL2 -lGL -lGLEW -lSDL2_image -lSDL2_ttf
 
 exe: main.cpp
