@@ -14,6 +14,7 @@ namespace spirit {
 
 class Batch {
 public:
+  Batch();
   Batch(Shader *shader, Texture *texture);
   void push(const Object2d *element);
   void push(const Text *text);
@@ -21,6 +22,8 @@ public:
   void clear();
   void set_projection(const glm::mat4 &projection);
   void set_modelview(const glm::mat4 &modelview);
+  void set_shader(Shader *shader);
+  void set_texture(Texture *texture);
 
 private:
   Shader *_shader;

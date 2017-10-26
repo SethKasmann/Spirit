@@ -2,6 +2,8 @@
 
 namespace spirit {
 
+Batch::Batch() : _shader(nullptr), _texture(nullptr) {}
+
 Batch::Batch(Shader *shader, Texture *texture)
     : _shader(shader), _texture(texture), _projection(glm::mat4(1)),
       _modelview(glm::mat4(1)) {
@@ -46,5 +48,19 @@ void Batch::set_projection(const glm::mat4 &projection) {
 
 void Batch::set_modelview(const glm::mat4 &modelview) {
   _modelview = modelview;
+}
+
+void Batch::set_shader(Shader *shader) { _shader = shader; }
+
+// NEED TO FIX THIS - figure out how to handle shaders.
+void Batch::set_texture(Texture *texture) {
+  _texture = texture;
+  if (_shader == nullptr)
+    return;
+  _texture->bind();
+  _shader->enable();
+  _shader->set_uniform_1i("tex_array", _texture->get_id());
+  _shader->disable();
+  _texture->unbind();
 }
 }
