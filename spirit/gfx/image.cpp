@@ -38,13 +38,15 @@ void Image::generate(int w, int h) {
 
   // Set the texture coordinates. A game object can copy these
   // coordinates to refer to this part of the image.
+  float idnt_w = .5 / w;
+  float idnt_h = .5 / h;
   _coordinates[0] =
-      glm::vec3(_position.x / w, (_position.y + _h) / h, _position.z);
+      glm::vec3(_position.x / w + idnt_w, (_position.y + _h) / h - idnt_h, _position.z);
   _coordinates[1] =
-      glm::vec3((_position.x + _w) / w, (_position.y + _h) / h, _position.z);
+      glm::vec3((_position.x + _w) / w - idnt_w, (_position.y + _h) / h - idnt_h, _position.z);
   _coordinates[2] =
-      glm::vec3((_position.x + _w) / w, _position.y / h, _position.z);
-  _coordinates[3] = glm::vec3(_position.x / w, _position.y / h, _position.z);
+      glm::vec3((_position.x + _w) / w - idnt_w, _position.y / h + idnt_h, _position.z);
+  _coordinates[3] = glm::vec3(_position.x / w + idnt_w, _position.y / h + idnt_h, _position.z);
 }
 
 // [] operator to access the texture coordinates. For an image, this

@@ -17,16 +17,16 @@ uint32_t rgba_to_uint(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
 class Object2d {
 public:
-  Object2d(const glm::vec3 &pos, int w, int h, uint8_t r, uint8_t g, uint8_t b,
+  Object2d(const glm::vec3 &pos, float w, float h, uint8_t r, uint8_t g, uint8_t b,
            uint8_t a = 255);
-  Object2d(const glm::vec3 &pos, int w, int h, const Texture &texture,
-           const std::string &key);
+  Object2d(const glm::vec3 &pos, float w, float h, const Texture &texture,
+           const std::string &key, int index=0);
   Object2d(const glm::vec3 &pos, const Texture &texture, const std::string &key,
            uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
   uint32_t get_color() const;
   const glm::vec3 &get_pos() const;
-  int get_w() const;
-  int get_h() const;
+  float get_w() const;
+  float get_h() const;
   float get_type() const;
   const std::array<glm::vec3, 4> &get_tex_coords() const;
 
@@ -34,7 +34,7 @@ private:
   float _type;
   uint32_t _color;
   glm::vec3 _pos;
-  int _w, _h;
+  float _w, _h;
   std::array<glm::vec3, 4> _tex_coords;
 };
 

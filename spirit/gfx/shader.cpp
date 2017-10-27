@@ -2,7 +2,13 @@
 
 namespace spirit {
 
-Shader::Shader(const char *vert_src, const char *frag_src) {
+Shader::Shader() {}
+
+// Destructor - delete the program object.
+Shader::~Shader() { glDeleteObjectARB(_program); }
+
+void Shader::init(const char *vert_src, const char *frag_src)
+{
   // Place the file contents into a string.
   std::string vert_str = file_to_string(vert_src);
   std::string frag_str = file_to_string(frag_src);
@@ -22,9 +28,6 @@ Shader::Shader(const char *vert_src, const char *frag_src) {
   // Link the program object.
   glLinkProgramARB(_program);
 }
-
-// Destructor - delete the program object.
-Shader::~Shader() { glDeleteObjectARB(_program); }
 
 // Initialize a shader based on it's type (vert or frag)
 bool Shader::init_shader(GLenum shader_type, const char *source) {
@@ -63,20 +66,20 @@ void Shader::disable() { glUseProgram(0); }
 
 GLenum Shader::get_id() const { return _program; }
 
-void Shader::set_vec2(const char *name, glm::vec2 &&vec) {
+void Shader::set_vec2(const char *name, glm::vec2 &&vec) const {
   glUniform2f(glGetUniformLocation(_program, name), vec.x, vec.y);
 }
 
-void Shader::set_mat4_fv(const char *name, glm::mat4 &mat) {
+void Shader::set_mat4_fv(const char *name, glm::mat4 &mat) const {
   glUniformMatrix4fv(glGetUniformLocation(_program, name), 1, GL_FALSE,
                      &mat[0][0]);
 }
 
-void Shader::set_uniform_1i(const char *name, GLint id) {
+void Shader::set_uniform_1i(const char *name, GLint id) const {
   glUniform1i(glGetUniformLocation(_program, name), id);
 }
 
-void Shader::set_uniform_1iv(const char *name, GLint *value, GLuint count) {
+void Shader::set_uniform_1iv(const char *name, GLint *value, GLuint count) const {
   glUniform1iv(glGetUniformLocation(_program, name), count, value);
 }
 }

@@ -51,6 +51,11 @@ void Texture::insert_font(std::string file, std::string key, size_t size) {
   }
 }
 
+void Texture::insert_sheet(std::string file, std::string key, const glm::vec4* positions, size_t size)
+{
+  _map[key] = std::unique_ptr<SubTexture>(new SpriteSheet(file, positions, size));
+}
+
 // Algorithm to pack each SubTexture within a 3D Open GL texture
 // while minimizing the height as much as possible.
 void Texture::fit(
@@ -75,10 +80,10 @@ void Texture::fit(
                                             y + h - begin->second->get_h(), z));
       begin->second->set_placed(true);
       // Recursive call to the left region remaining.
-      fit(std::next(begin), end, 0, 0, z, w - begin->second->get_w() - 1, h);
+      fit(std::next(begin), end, x, 0, z, w - begin->second->get_w() - 1, h);
       // Recurive call to the upper region remaining.
       fit(std::next(begin), end, x + w - begin->second->get_w() + 1, 0, z,
-          w - begin->second->get_w() - 1, h - begin->second->get_h() - 1);
+          begin->second->get_w() - 1, h - begin->second->get_h() - 1);
       break;
     }
   }
@@ -133,12 +138,23 @@ void Texture::generate() {
   unbind();
 }
 
-void Texture::bind() {
+void Texture::bind() const {
   glActiveTexture(GL_TEXTURE0 + _id);
   glBindTexture(GL_TEXTURE_2D_ARRAY, _texture);
 }
 
-void Texture::unbind() { glBindTexture(GL_TEXTURE_2D_ARRAY, 0); }
+void Texture::unbind() const { glBindTexture(GL_TEXTURE_2D_ARRAY, 0); }
+
+void Texture::link_to_shader(const Shader& shader)
+{
+  shader.set_uniform_1i("tex_array", _id);
+}
+
+GLuint Texture::get_id() const { return _id; }
+
+GLsizei Texture::get_w() const { return _w; }
+
+GLsizei Texture::get_h() const { return _h; }
 
 const SubTexture &Texture::operator[](std::string key) const {
   // Confirm the key is in the map.
@@ -149,10 +165,4 @@ const SubTexture &Texture::operator[](std::string key) const {
   // Return a reference to the layer.
   return *(it->second);
 }
-
-GLuint Texture::get_id() const { return _id; }
-
-GLsizei Texture::get_w() const { return _w; }
-
-GLsizei Texture::get_h() const { return _h; }
 }

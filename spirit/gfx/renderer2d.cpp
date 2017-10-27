@@ -28,8 +28,7 @@ Renderer2d::Renderer2d() : _vertex_ptr(nullptr), _size(0) {
 
   // Attribute pointer for the color
   glVertexAttribPointer(color_location, color_count, GL_UNSIGNED_BYTE, GL_TRUE,
-                        vertex_stride, 
-                        reinterpret_cast<void *>(color_offset));
+                        vertex_stride, reinterpret_cast<void *>(color_offset));
 
   // Attribute pointer for the texture coordinates
   glVertexAttribPointer(texture_location, texture_count, GL_FLOAT, GL_FALSE,
@@ -70,6 +69,18 @@ Renderer2d::Renderer2d() : _vertex_ptr(nullptr), _size(0) {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void Renderer2d::submit(const Batch &batch, const Camera2d& camera) {
+  // Get scaled camera dimensions.
+  glm::vec2 camera_dim = glm::vec2(camera.get_w(), camera.get_h());
+
+  const std::vector<const Object2d *>& vec = batch.get_vector();
+  for (std::vector<const Object2d *>::const_iterator it = vec.begin();
+       it != vec.end(); ++it)
+  {
+      object_to_vertices(*it);
+  }
+}
+
 void Renderer2d::begin() {
   glBindBuffer(GL_ARRAY_BUFFER, _vbo);
   _vertex_ptr =
@@ -82,7 +93,7 @@ void Renderer2d::end() {
   _vertex_ptr = nullptr;
 }
 
-void Renderer2d::push(const Object2d *obj) {
+void Renderer2d::object_to_vertices(const Object2d *obj) {
 
   uint32_t color = obj->get_color();
   float tex_id = obj->get_type();

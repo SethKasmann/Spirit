@@ -5,10 +5,13 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 #include "glm.hpp"
 #include "GL/glew.h"
 #include "vertex.h"
 #include "object2d.h"
+#include "batch.h"
+#include "camera2d.h"
 
 namespace spirit {
 
@@ -20,7 +23,8 @@ static const int MAX_IBO_SIZE = 10000 * 6;
 class Renderer2d {
 public:
   Renderer2d();
-  void push(const Object2d *obj);
+  void object_to_vertices(const Object2d *obj);
+  void submit(const Batch& batch, const Camera2d& camera);
   void begin();
   void end();
   void render();

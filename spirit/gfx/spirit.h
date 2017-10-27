@@ -10,6 +10,7 @@
 #include "object2d.h"
 #include "glm.hpp"
 #include "batch.h"
+#include "renderer2d.h"
 union SDL_Event;
 namespace spirit {
 
@@ -29,6 +30,7 @@ protected:
   void begin_loop();
   void end_loop();
   bool closed() const;
+  void render(Batch& batch, Texture& texture);
 
 private:
   static int process_events(void *userdata, SDL_Event *event);
@@ -36,5 +38,7 @@ private:
   Camera2d _camera;
   FPSCounter _fps;
   static SpiritEngine *_self;
+  Renderer2d _renderer;
+  Shader _shader;
 };
 }

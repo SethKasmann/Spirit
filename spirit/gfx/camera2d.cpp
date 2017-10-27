@@ -54,18 +54,39 @@ const glm::mat4 &Camera2d::get_modelview() {
   if (_update) {
     // Set the translation matrix.
     glm::mat4 translation =
-        glm::translate(glm::mat4(1), glm::vec3(_position.x, _position.y, 0));
+        glm::translate(glm::mat4(1), glm::vec3(-_position.x, -_position.y, 0));
 
     // Set the scaling matrix.
     glm::mat4 scaling =
-        glm::translate(glm::mat4(1), glm::vec3(-_position.x, -_position.y, 0));
+        glm::translate(glm::mat4(1), glm::vec3(_position.x, _position.y, 0));
     scaling = glm::scale(scaling, glm::vec3(_scale, _scale, 1));
-    scaling = glm::translate(scaling, glm::vec3(_position.x, _position.y, 0));
+    scaling = glm::translate(scaling, glm::vec3(-_position.x, -_position.y, 0));
 
     // Calculate the model matrix.
     _modelview = translation * scaling;
     _update = false;
   }
   return _modelview;
+}
+
+// Getters
+float Camera2d::get_w() const
+{
+  return _w;
+}
+
+float Camera2d::get_h() const
+{
+  return _h;
+}
+
+float Camera2d::get_scale() const
+{
+  return _scale;
+}
+
+const glm::vec2& Camera2d::get_position() const
+{
+  return _position;
 }
 }

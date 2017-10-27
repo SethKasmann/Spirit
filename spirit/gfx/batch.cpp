@@ -2,17 +2,7 @@
 
 namespace spirit {
 
-Batch::Batch() : _shader(nullptr), _texture(nullptr) {}
-
-Batch::Batch(Shader *shader, Texture *texture)
-    : _shader(shader), _texture(texture), _projection(glm::mat4(1)),
-      _modelview(glm::mat4(1)) {
-  _texture->bind();
-  _shader->enable();
-  _shader->set_uniform_1i("tex_array", _texture->get_id());
-  _shader->disable();
-  _texture->unbind();
-}
+Batch::Batch() {}
 
 void Batch::push(const Object2d *element) { _elements.push_back(element); }
 
@@ -26,22 +16,6 @@ void Batch::push(const Text *text) {
 
 void Batch::clear() { _elements.clear(); }
 
-void Batch::render() {
-  _shader->enable();
-  _shader->set_mat4_fv("pr_matrix", _projection);
-  _shader->set_mat4_fv("ml_matrix", _modelview);
-  _texture->bind();
-  _renderer.begin();
-  for (int i = 0; i < _elements.size(); ++i) {
-    _renderer.push(_elements[i]);
-  }
-  _renderer.end();
-  _renderer.render();
-  _texture->unbind();
-  _shader->disable();
-  clear();
-}
-
 void Batch::set_projection(const glm::mat4 &projection) {
   _projection = projection;
 }
@@ -50,17 +24,14 @@ void Batch::set_modelview(const glm::mat4 &modelview) {
   _modelview = modelview;
 }
 
-void Batch::set_shader(Shader *shader) { _shader = shader; }
+void Batch::link_to_shader(const Shader& shader)
+{
+  shader.set_mat4_fv("pr_matrix", _projection);
+  shader.set_mat4_fv("ml_matrix", _modelview);
+}
 
-// NEED TO FIX THIS - figure out how to handle shaders.
-void Batch::set_texture(Texture *texture) {
-  _texture = texture;
-  if (_shader == nullptr)
-    return;
-  _texture->bind();
-  _shader->enable();
-  _shader->set_uniform_1i("tex_array", _texture->get_id());
-  _shader->disable();
-  _texture->unbind();
+const std::vector<const Object2d *>& Batch::get_vector() const
+{
+  return _elements;
 }
 }

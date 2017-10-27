@@ -10,7 +10,10 @@ SpiritEngine::SpiritEngine()
 
 // Constructor that handles initialization.
 SpiritEngine::SpiritEngine(std::string name, int w, int h)
-    : _window(name, w, h), _camera(w, h) {
+    : _window(name, w, h), _camera(w, h), _renderer() {
+  // Initialize the shader.
+  _shader.init("spirit/shader/basic.vert", "spirit/shader/basic.frag");
+  // Link the SDL event watch to the static input handler function.
   SDL_AddEventWatch(process_events, nullptr);
   _self = this;
 }
@@ -64,4 +67,19 @@ void SpiritEngine::end_loop() {
 }
 
 bool SpiritEngine::closed() const { return _window.closed(); }
+
+void SpiritEngine::render(Batch& batch, Texture& texture)
+{
+	_shader.enable();
+	texture.bind();
+	texture.link_to_shader(_shader);
+	batch.link_to_shader(_shader);
+	_renderer.begin();
+	_renderer.submit(batch, _camera);
+	_renderer.end();
+	_renderer.render();
+	texture.unbind();
+	_shader.disable();
+	batch.clear();
+}
 }

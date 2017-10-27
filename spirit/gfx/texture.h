@@ -12,6 +12,8 @@
 #include "subtexture.h"
 #include "image.h"
 #include "font.h"
+#include "shader.h"
+#include "spritesheet.h"
 
 namespace spirit {
 
@@ -35,14 +37,16 @@ public:
   ~Texture();
   void insert_image(std::string file, std::string key);
   void insert_font(std::string file, std::string key, size_t size);
+  void insert_sheet(std::string file, std::string key, const glm::vec4* positions, size_t size);
   void fit(std::unordered_map<std::string,
                               std::unique_ptr<SubTexture>>::iterator begin,
            std::unordered_map<std::string,
                               std::unique_ptr<SubTexture>>::iterator end,
            int x, int y, int z, int w, int h);
   void generate();
-  void bind();
-  void unbind();
+  void bind() const;
+  void unbind() const;
+  void link_to_shader(const Shader& shader);
   GLuint get_id() const;
   GLsizei get_w() const;
   GLsizei get_h() const;
