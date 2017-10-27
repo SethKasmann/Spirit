@@ -2,6 +2,7 @@
 #define SHEET_H
 
 #include "subtexture.h"
+#include <vector>
 
 namespace spirit {
 
