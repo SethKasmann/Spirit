@@ -10,12 +10,13 @@ SpiritEngine::SpiritEngine()
 
 // Constructor that handles initialization.
 SpiritEngine::SpiritEngine(std::string name, int w, int h)
-    : _window(name, w, h), _camera(w, h), _renderer() {
+    : _window(name, w, h), _camera(w, h), _camera3d(w, h), _renderer() {
   // Initialize the shader.
   _shader.init("spirit/shader/basic.vert", "spirit/shader/basic.frag");
   // Link the SDL event watch to the static input handler function.
   SDL_AddEventWatch(process_events, nullptr);
   _self = this;
+  glDisable(GL_DEPTH_TEST);
 }
 
 // Destructor.
@@ -25,6 +26,9 @@ SpiritEngine::~SpiritEngine() {
 }
 
 Camera2d &SpiritEngine::get_camera() { return _camera; }
+
+Camera3d &SpiritEngine::get_camera3d() { return _camera3d; }
+
 
 // Static function to process events.
 int SpiritEngine::process_events(void *userdata, SDL_Event *event) {
@@ -40,6 +44,8 @@ int SpiritEngine::process_events(void *userdata, SDL_Event *event) {
     break;
   case SDL_WINDOWEVENT:
     if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+      _self->_camera3d.set_w(_self->_window.get_w());
+      _self->_camera3d.set_h(_self->_window.get_h());
       _self->_camera.set_projection(static_cast<float>(_self->_window.get_w()),
                                     static_cast<float>(_self->_window.get_h()));
       // Do I even need this function.. ?

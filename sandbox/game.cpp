@@ -19,7 +19,7 @@ Game::Game()
   for (float i = 0; i < 960.0f; i += 108.0f) {
     for (float j = 0; j < 540.0f; j += 140.0f) {
       sprites.push_back(
-          spirit::Object2d(glm::vec3(i, j, 0), 108.0f, 140.0f, texture, "running", rand() % 16));
+          spirit::Object2d(glm::vec3(i, j, rand() % 1000), 108.0f, 140.0f, texture, "running", rand() % 16));
     }
   }
 
@@ -32,8 +32,8 @@ void Game::main_loop() {
     for (auto &s : sprites)
       batch.push(&s);
 
-    batch.set_projection(get_camera().get_projection());
-    batch.set_modelview(get_camera().get_modelview());
+    batch.set_projection(get_camera3d().get_projection());
+    batch.set_modelview(get_camera3d().get_view());
     render(batch, texture);
     end_loop();
   }
@@ -42,28 +42,51 @@ void Game::main_loop() {
 void Game::keyboard_event(int key, bool state, bool repeat) {
   switch (key) {
   case SDL_SCANCODE_W:
-    if (state & !repeat)
+    if (state)
+    {
       get_camera().move(0.0f, 5.0f);
+      get_camera3d().move(glm::vec3(0.0f, 5.0f, 0.0f));
+    }
     break;
   case SDL_SCANCODE_S:
-    if (state & !repeat)
+    if (state)
+    {
       get_camera().move(0.0f, -5.0f);
+      get_camera3d().move(glm::vec3(0.0f, -5.0f, 0.0f));
+    }
     break;
   case SDL_SCANCODE_D:
-    if (state & !repeat)
+    if (state)
+    {
       get_camera().move(5.0f, 0.0f);
+      get_camera3d().move(glm::vec3(5.0f, 0.0f, 0.0f));
+    }
     break;
   case SDL_SCANCODE_A:
-    if (state & !repeat)
+    if (state)
+    {
       get_camera().move(-5.0f, 0.0f);
+      get_camera3d().move(glm::vec3(-5.0f, 0.0f, 0.0f));
+    }
     break;
   case SDL_SCANCODE_EQUALS:
-    if (state & !repeat)
-      get_camera().zoom(0.1f);
+    if (state)
+    {
+      get_camera().zoom(0.5f);
+      get_camera3d().move(glm::vec3(0.0f, 0.0f, 5.0f));
+    }
     break;
   case SDL_SCANCODE_MINUS:
-    if (state & !repeat)
-      get_camera().zoom(-0.1f);
+    if (state)
+    {
+      get_camera().zoom(-0.5f);
+      get_camera3d().move(glm::vec3(0.0f, 0.0f, -5.0f));
+    }
     break;
+  case SDL_SCANCODE_R:
+    if (state)
+    {
+      get_camera3d().rotate(0.1f, glm::vec3(0, 1, 0));
+    }
   }
 }

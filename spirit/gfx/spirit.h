@@ -4,6 +4,7 @@
 #include "inputhandler.h"
 #include "window.h"
 #include "camera2d.h"
+#include "camera3d.h"
 #include "texture.h"
 #include "fpscounter.h"
 #include "shader.h"
@@ -26,6 +27,7 @@ protected:
   ~SpiritEngine();
   virtual void keyboard_event(int key, bool state, bool repeat){};
   Camera2d &get_camera();
+  Camera3d &get_camera3d();
   // Need to change this name.
   void begin_loop();
   void end_loop();
@@ -36,6 +38,7 @@ private:
   static int process_events(void *userdata, SDL_Event *event);
   Window _window;
   Camera2d _camera;
+  Camera3d _camera3d;
   FPSCounter _fps;
   static SpiritEngine *_self;
   Renderer2d _renderer;
